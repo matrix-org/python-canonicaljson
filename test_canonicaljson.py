@@ -35,6 +35,19 @@ class TestCanonicalJson(unittest.TestCase):
                 u"la merde amusée": u"💩",
         }), b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}')
 
+        # so should U+2028 and U+2029
+        self.assertEquals(
+            encode_canonical_json({u"spaces": u"\u2028 \u2029"}),
+            b'{"spaces":"\xe2\x80\xa8 \xe2\x80\xa9"}',
+        )
+
+        # but we need to watch out for 'u1234' after backslash, which should
+        # get encoded to an escaped backslash, followed by u1234
+        self.assertEquals(
+            encode_canonical_json(u"\\u1234"),
+            b'"\\\\u1234"',
+        )
+
     def test_encode_pretty_printed(self):
         self.assertEquals(encode_pretty_printed_json({}), b'{}')
 
