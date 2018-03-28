@@ -1,12 +1,36 @@
 language: python
-env:
-- TOXENV=packaging
-- TOXENV=pep8
-- TOXENV=py3pep8
-- TOXENV=py27
-- TOXENV=py33
-- TOXENV=py34
-- TOXENV=pypy
+
+# tell travis to cache ~/.cache/pip
+cache: pip
+
+matrix:
+  include:
+    - python: 2.7
+      env: TOXENV=packaging
+      
+    - python: 2.7
+      env: TOXENV=pep8
+
+    - python: 3.6
+      env: TOXENV=py3pep8
+
+    - python: 2.7
+      env: TOXENV=py27
+
+    - python: 3.3
+      env: TOXENV=py33
+
+    - python: 3.4
+      env: TOXENV=py34
+    
+    - python: 3.5
+      env: TOXENV=py35
+
+    - python: 3.6
+      env: TOXENV=py36
+
+    - python: pypy
+      env: TOXENV=pypy
 
 install:
 - pip install tox
