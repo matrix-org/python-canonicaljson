@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright 2015 OpenMarket Ltd
+# Copyright 2018 New Vector Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -48,6 +49,18 @@ setup(
         "simplejson>=3.6.5",
         "frozendict>=0.4",
     ],
+    zip_safe=True,
     long_description=read_file(("README.rst",)),
     keywords="json",
+    author='The Matrix.org Team',
+    author_email='team@matrix.org',
+    url='https://github.com/matrix-org/python-canonicaljson',
+    license='Apache License, Version 2.0',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable'
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
+    ],
 )
