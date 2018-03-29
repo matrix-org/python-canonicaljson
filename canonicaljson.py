@@ -15,7 +15,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# using simplejson rather than regular json gives approximately a 25%
+import re
+from six import unichr, PY2
+
+# using simplejson rather than regular json gives approximately a 100%
 # performance improvement (as measured on python 2.7.12/simplejson 3.13.2)
 import simplejson as json
 
@@ -33,13 +36,19 @@ def _default(obj):
                     obj.__class__.__name__)
 
 
+# ideally we'd set ensure_ascii=False, but the ensure_ascii codepath is so
+# much quicker (assuming c speedups are enabled) that it's actually much
+# quicker to let it do that and then substitute back (it's about 2.5x faster).
+#
+# (in any case, simplejson's ensure_ascii doesn't get U+2028 and U+2029 right,
+# as per https://github.com/simplejson/simplejson/issues/206).
+#
 _canonical_encoder = json.JSONEncoder(
-    ensure_ascii=False,
+    ensure_ascii=True,
     separators=(',', ':'),
     sort_keys=True,
     default=_default,
 )
-
 
 _pretty_encoder = json.JSONEncoder(
     ensure_ascii=True,
@@ -47,6 +56,71 @@ _pretty_encoder = json.JSONEncoder(
     sort_keys=True,
     default=_default,
 )
+
+# This regexp matches either `\uNNNN` or `\\`. We match '\\' (and leave it
+# unchanged) to make sure that the regex doesn't accidentally capture the uNNNN
+# in `\\uNNNN`, which is an escaped backslash followed by 'uNNNN'.
+_U_ESCAPE = re.compile(r"\\u([0-9a-f]{4})|\\\\")
+
+
+def _unascii(s):
+    """Unpack `\\uNNNN` escapes in 's' and encode the result as UTF-8
+
+    This method takes the output of the JSONEncoder and expands any \\uNNNN
+    escapes it finds.
+
+    For performance, it assumes that the input is valid JSON, and performs few
+    sanity checks.
+    """
+
+    # make the fast path fast: if there are no matches in the string, the
+    # whole thing is ascii. On python 2, that means we're done. On python 3,
+    # we have to turn it into a bytes, which is quickest with encode('utf-8')
+    m = _U_ESCAPE.search(s)
+    if not m:
+        return s if PY2 else s.encode('utf-8')
+
+    # appending to a string (or a bytes) is slooow, so we accumulate sections
+    # of string result in 'chunks', and join them all together later.
+    # (It doesn't seem to make much difference whether we accumulate
+    # utf8-encoded bytes, or strings which we utf-8 encode after rejoining)
+    #
+    chunks = []
+
+    # 'pos' tracks the index in 's' that we have processed into 'chunks' so
+    # far.
+    pos = 0
+
+    while m:
+        start = m.start()
+        end = m.end()
+
+        g = m.group(1)
+
+        if g is None:
+            # escaped backslash: pass it through along with anything before the
+            # match
+            chunks.append(s[pos:end])
+        else:
+            # \uNNNN, but we have to watch out for surrogate pairs
+            c = int(g, 16)
+
+            if c & 0xfc00 == 0xd800 and s[end:end + 2] == '\\u':
+                esc2 = s[end + 2:end + 6]
+                c2 = int(esc2, 16)
+                if c2 & 0xfc00 == 0xdc00:
+                    c = 0x10000 + (((c - 0xd800) << 10) | (c2 - 0xdc00))
+                    end += 6
+            chunks.append(s[pos:start])
+            chunks.append(unichr(c))
+
+        pos = end
+        m = _U_ESCAPE.search(s, pos)
+
+    # pass through anything after the last match
+    chunks.append(s[pos:])
+
+    return (''.join(chunks)).encode("utf-8")
 
 
 def encode_canonical_json(json_object):
@@ -58,9 +132,8 @@ def encode_canonical_json(json_object):
 
     Returns:
         bytes encoding the JSON object"""
-
     s = _canonical_encoder.encode(json_object)
-    return s.encode("UTF-8")
+    return _unascii(s)
 
 
 def encode_pretty_printed_json(json_object):
