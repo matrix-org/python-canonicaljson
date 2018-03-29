@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+#
 # Copyright 2015 OpenMarket Ltd
+# Copyright 2018 New Vector Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,12 +30,22 @@ class TestCanonicalJson(unittest.TestCase):
     def test_encode_canonical(self):
         self.assertEquals(encode_canonical_json({}), b'{}')
 
+        # non-ascii should come out utf8-encoded.
+        self.assertEquals(encode_canonical_json({
+                u"la merde amusée": u"💩",
+        }), b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}')
+
     def test_encode_pretty_printed(self):
         self.assertEquals(encode_pretty_printed_json({}), b'{}')
 
     def test_frozen_dict(self):
-        self.assertEquals(encode_canonical_json(frozendict({})), b'{}')
-        self.assertEquals(encode_pretty_printed_json(frozendict({})), b'{}')
+        self.assertEquals(
+            encode_canonical_json(frozendict({"a": 1})),
+            b'{"a":1}',
+        )
+        self.assertEquals(
+            encode_pretty_printed_json(frozendict({"a": 1})),
+            b'{\n    "a": 1\n}')
 
     def test_unknown_type(self):
         class Unknown(object):
