@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Copyright 2014 OpenMarket Ltd
+# Copyright 2018 New Vector Ltd
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,12 +15,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+# using simplejson rather than regular json gives approximately a 25%
+# performance improvement (as measured on python 2.7.12/simplejson 3.13.2)
 import simplejson as json
 
 from frozendict import frozendict
 
 __version__ = '1.0.0'
+
+
+def _default(obj):
+    if type(obj) is frozendict:
+        return dict(obj)
+    raise TypeError('Object of type %s is not JSON serializable' %
+                    obj.__class__.__name__)
+
+
+_canonical_encoder = json.JSONEncoder(
+    ensure_ascii=False,
+    separators=(',', ':'),
+    sort_keys=True,
+    default=_default,
+)
+
+
+_pretty_encoder = json.JSONEncoder(
+    ensure_ascii=True,
+    indent=4,
+    sort_keys=True,
+    default=_default,
+)
 
 
 def encode_canonical_json(json_object):
@@ -32,29 +57,11 @@ def encode_canonical_json(json_object):
     Returns:
         bytes encoding the JSON object"""
 
-    return json.dumps(
-        json_object,
-        ensure_ascii=False,
-        separators=(',', ':'),
-        sort_keys=True,
-        cls=FrozenEncoder
-    ).encode("UTF-8")
+    s = _canonical_encoder.encode(json_object)
+    return s.encode("UTF-8")
 
 
 def encode_pretty_printed_json(json_object):
     """Encodes the JSON object dict as human readable ascii bytes."""
 
-    return json.dumps(
-        json_object,
-        ensure_ascii=True,
-        indent=4,
-        sort_keys=True,
-        cls=FrozenEncoder
-    ).encode("ascii")
-
-
-class FrozenEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if type(obj) is frozendict:
-            return dict(obj)
-        return json.JSONEncoder.default(self, obj)
+    return _pretty_encoder.encode(json_object).encode("ascii")
