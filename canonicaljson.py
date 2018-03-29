@@ -26,7 +26,9 @@ __version__ = '1.0.0'
 
 def _default(obj):
     if type(obj) is frozendict:
-        return dict(obj)
+        # fishing the protected dict out of the object is a bit nasty,
+        # but we don't really want the overhead of copying the dict.
+        return obj._dict
     raise TypeError('Object of type %s is not JSON serializable' %
                     obj.__class__.__name__)
 
