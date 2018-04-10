@@ -1,4 +1,4 @@
-Version 1.1.0 released 2018-04-xx
+Version 1.1.0 released 2018-04-06
 
  * Significant performance improvements
    (https://github.com/matrix-org/python-canonicaljson/pull/7,
