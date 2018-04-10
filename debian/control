@@ -1,0 +1,33 @@
+Source: canonicaljson
+Maintainer: Erik Johnston <erikj@matrix.org>
+Section: python
+Priority: optional
+Build-Depends: python-setuptools (>= 0.6b3), python-all (>= 2.6.6-3), debhelper (>= 9),
+ dh-python, python-frozendict (>= 0.4), python-simplejson (>= 3.6.5)
+Standards-Version: 3.9.1
+X-Python-Version: >= 2.7
+
+Package: python-canonicaljson
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Canonical JSON
+ Canonical JSON
+ ==============
+ .
+ .. image:: https://img.shields.io/pypi/v/canonicaljson.svg
+     :target: https://pypi.python.org/pypi/canonicaljson/
+     :alt: Latest Version
+ .
+ .. image:: https://img.shields.io/travis/matrix-org/python-canonicaljson.svg
+    :target: https://travis-ci.org/matrix-org/python-canonicaljson
+ .
+ Features
+ --------
+ .
+ * Encodes objects and arrays as `RFC 7159`_ JSON.
+ * Sorts object keys so that you get the same result each time.
+ * Has no inignificant whitespace to make the output as small as possible.
+ * Escapes only the characters that must be escaped, U+0000 to U+0019 / U+0022 /
+   U+0056, to keep the output as small as possible.
+ * Uses the shortest escape sequence for each escaped character.
+ * Encodes the JSON as UTF-8.

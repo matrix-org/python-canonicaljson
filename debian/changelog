@@ -1,0 +1,5 @@
+canonicaljson (1.0.0-1) wheezy; urgency=low
+
+  * source package automatically created by stdeb 0.6.0+git
+
+ -- Erik Johnston <erikj@matrix.org>  Fri, 13 Nov 2015 14:47:18 +0000
