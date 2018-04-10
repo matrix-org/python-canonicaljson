@@ -1,5 +1,5 @@
 Source: python-canonicaljson
-Maintainer: Erik Johnston <erikj@matrix.org>
+Maintainer: Richard van der Hoff <richard@matrix.org>
 Section: python
 Priority: optional
 Build-Depends:
@@ -13,7 +13,7 @@ Build-Depends:
  python-simplejson (>= 3.6.5),
  python3-frozendict (>= 0.4),
  python3-simplejson (>= 3.6.5)
-Standards-Version: 3.9.6
+Standards-Version: 3.9.7
 X-Python-Version: >= 2.7
 
 Package: python-canonicaljson

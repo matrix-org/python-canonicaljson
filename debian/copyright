@@ -3,7 +3,15 @@ Upstream-Contact: Richard van der Hoff <richard@matrix.org>
 
 Files: *
 Copyright: 2014-2015 OpenMarket Ltd
-Copyright: 2018 New Vector Ltd
+    2018 New Vector Ltd
+License: Apache-2.0
+
+Files: debian/*
+Copyright: 2014-2015 OpenMarket Ltd
+    2017 Andrew Shadura <andrewsh@debian.org>
+    2018 New Vector Ltd
+License: Apache-2.0
+
 License: Apache-2.0
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -19,10 +27,3 @@ License: Apache-2.0
  .
  On Debian systems, the complete text of the Apache License,
  version 2.0 can be found in ‘/usr/share/common-licenses/Apache-2.0’.
-
-
-Files: debian/*
-Copyright: 2014-2015 OpenMarket Ltd
-Copyright: 2017 Andrew Shadura <andrewsh@debian.org>
-Copyright: 2018 New Vector Ltd
-License: Apache-2.0
