@@ -1,3 +1,12 @@
+python-canonicaljson (1.1.0-1) stable; urgency=medium
+
+  * Significant performance improvements
+    (https://github.com/matrix-org/python-canonicaljson/pull/7,
+    https://github.com/matrix-org/python-canonicaljson/pull/8,
+    https://github.com/matrix-org/python-canonicaljson/pull/9)
+
+ -- Richard van der Hoff <richard@matrix.org>  Tue, 10 Apr 2018 16:42:19 +0100
+
 canonicaljson (1.0.0-1) wheezy; urgency=low
 
   * source package automatically created by stdeb 0.6.0+git
