@@ -1,33 +1,56 @@
-Source: canonicaljson
+Source: python-canonicaljson
 Maintainer: Erik Johnston <erikj@matrix.org>
 Section: python
 Priority: optional
-Build-Depends: python-setuptools (>= 0.6b3), python-all (>= 2.6.6-3), debhelper (>= 9),
- dh-python, python-frozendict (>= 0.4), python-simplejson (>= 3.6.5)
-Standards-Version: 3.9.1
+Build-Depends:
+ debhelper (>= 9),
+ dh-python,
+ python-all (>= 2.6.6-3),
+ python-setuptools (>= 0.6.24),
+ python3-all,
+ python3-setuptools (>= 0.6.24),
+ python-frozendict (>= 0.4),
+ python-simplejson (>= 3.6.5),
+ python3-frozendict (>= 0.4),
+ python3-simplejson (>= 3.6.5)
+Standards-Version: 3.9.6
 X-Python-Version: >= 2.7
 
 Package: python-canonicaljson
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}
-Description: Canonical JSON
- Canonical JSON
- ==============
+Depends:
+ python-frozendict (>= 0.4),
+ python-simplejson (>= 3.6.5),
+ ${misc:Depends},
+ ${python:Depends}
+Provides: ${python:Provides}
+Description: canonical JSON implementation for Python 2
+ Canonical JSON implementation for Python 2.
  .
- .. image:: https://img.shields.io/pypi/v/canonicaljson.svg
-     :target: https://pypi.python.org/pypi/canonicaljson/
-     :alt: Latest Version
- .
- .. image:: https://img.shields.io/travis/matrix-org/python-canonicaljson.svg
-    :target: https://travis-ci.org/matrix-org/python-canonicaljson
- .
- Features
- --------
- .
- * Encodes objects and arrays as `RFC 7159`_ JSON.
+ * Encodes objects and arrays as RFC 7159 JSON.
  * Sorts object keys so that you get the same result each time.
  * Has no inignificant whitespace to make the output as small as possible.
  * Escapes only the characters that must be escaped, U+0000 to U+0019 / U+0022 /
    U+0056, to keep the output as small as possible.
  * Uses the shortest escape sequence for each escaped character.
  * Encodes the JSON as UTF-8.
+ * Can encode frozendict immutable dictionaries.
+
+Package: python3-canonicaljson
+Architecture: all
+Depends:
+ python3-frozendict (>= 0.4),
+ python3-simplejson (>= 3.6.5),
+ ${misc:Depends},
+ ${python3:Depends}
+Description: canonical JSON implementation for Python 3
+ Canonical JSON implementation for Python 3.
+ .
+ * Encodes objects and arrays as RFC 7159 JSON.
+ * Sorts object keys so that you get the same result each time.
+ * Has no inignificant whitespace to make the output as small as possible.
+ * Escapes only the characters that must be escaped, U+0000 to U+0019 / U+0022 /
+   U+0056, to keep the output as small as possible.
+ * Uses the shortest escape sequence for each escaped character.
+ * Encodes the JSON as UTF-8.
+ * Can encode frozendict immutable dictionaries.
