@@ -3,7 +3,7 @@ python-canonicaljson (1.1.1) stable; urgency=medium
   * Fix escaping of control characters U+0000 to U+001F, which was broken in
     the previous release
 
- -- Richard van der Hoff <a>  Wed, 11 Apr 2018 18:01:50 +0100
+ -- Richard van der Hoff <richard@matrix.org>  Wed, 11 Apr 2018 18:01:50 +0100
 
 python-canonicaljson (1.1.0) stable; urgency=medium
 
