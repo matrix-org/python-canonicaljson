@@ -24,7 +24,7 @@ import simplejson as json
 
 from frozendict import frozendict
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 
 def _default(obj):
