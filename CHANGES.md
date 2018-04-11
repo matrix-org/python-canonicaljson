@@ -1,3 +1,8 @@
+Version 1.1.1 released 2018-04-11
+
+ * Fix escaping of control characters U+0000 to U+001F, which was broken in
+   the previous release
+
 Version 1.1.0 released 2018-04-06
 
  * Significant performance improvements
