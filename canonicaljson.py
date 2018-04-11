@@ -67,7 +67,8 @@ def _unascii(s):
     """Unpack `\\uNNNN` escapes in 's' and encode the result as UTF-8
 
     This method takes the output of the JSONEncoder and expands any \\uNNNN
-    escapes it finds.
+    escapes it finds (except for \\u0000 to \\u001F, which are converted to
+    \\xNN escapes).
 
     For performance, it assumes that the input is valid JSON, and performs few
     sanity checks.
@@ -112,7 +113,12 @@ def _unascii(s):
                     c = 0x10000 + (((c - 0xd800) << 10) | (c2 - 0xdc00))
                     end += 6
             chunks.append(s[pos:start])
-            chunks.append(unichr(c))
+
+            if c < 0x20:
+                # convert to an \xNN escape
+                chunks.append('\\x%02x' % c)
+            else:
+                chunks.append(unichr(c))
 
         pos = end
         m = _U_ESCAPE.search(s, pos)

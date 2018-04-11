@@ -30,6 +30,18 @@ class TestCanonicalJson(unittest.TestCase):
     def test_encode_canonical(self):
         self.assertEquals(encode_canonical_json({}), b'{}')
 
+        # ctrl-chars should be encoded.
+        self.assertEquals(
+            encode_canonical_json(u"text\u0003\r\n"),
+            b'"text\\x03\\r\\n"',
+        )
+
+        # quotes and backslashes should be escaped.
+        self.assertEquals(
+            encode_canonical_json(r'"\ test'),
+            b'"\\"\\\\ test"',
+        )
+
         # non-ascii should come out utf8-encoded.
         self.assertEquals(encode_canonical_json({
                 u"la merde amusée": u"💩",
