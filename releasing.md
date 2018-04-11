@@ -11,6 +11,7 @@ Releasing python-canonicaljson
   * ``python setup.py sdist bdist_wheel``
   * ``twine upload -s dist/*``
 * ``git tag -s v<ver>``
+* ``git push``
 * ``git push --tags``
 * Follow instructions below to release debian packaging.
 
