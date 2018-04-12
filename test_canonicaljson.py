@@ -33,7 +33,7 @@ class TestCanonicalJson(unittest.TestCase):
         # ctrl-chars should be encoded.
         self.assertEquals(
             encode_canonical_json(u"text\u0003\r\n"),
-            b'"text\\x03\\r\\n"',
+            b'"text\\u0003\\r\\n"',
         )
 
         # quotes and backslashes should be escaped.
