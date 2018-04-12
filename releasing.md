@@ -39,6 +39,6 @@ Debian release
 git clone git@github.com:matrix-org/python-canonicaljson.git -b v<ver> python-canonicaljson-clean
 
 cd python-canonicaljson-clean
-sbuild --arch-all
+sbuild -s --arch-all -d stretch
 debsign
 ```
