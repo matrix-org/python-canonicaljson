@@ -106,18 +106,18 @@ def _unascii(s):
             # \uNNNN, but we have to watch out for surrogate pairs
             c = int(g, 16)
 
-            if c & 0xfc00 == 0xd800 and s[end:end + 2] == '\\u':
-                esc2 = s[end + 2:end + 6]
-                c2 = int(esc2, 16)
-                if c2 & 0xfc00 == 0xdc00:
-                    c = 0x10000 + (((c - 0xd800) << 10) | (c2 - 0xdc00))
-                    end += 6
-            chunks.append(s[pos:start])
-
             if c < 0x20:
-                # convert to an \xNN escape
-                chunks.append('\\x%02x' % c)
+                # leave as a \uNNNN escape
+                chunks.append(s[pos:end])
             else:
+                if c & 0xfc00 == 0xd800 and s[end:end + 2] == '\\u':
+                    esc2 = s[end + 2:end + 6]
+                    c2 = int(esc2, 16)
+                    if c2 & 0xfc00 == 0xdc00:
+                        c = 0x10000 + (((c - 0xd800) << 10) | (c2 - 0xdc00))
+                        end += 6
+
+                chunks.append(s[pos:start])
                 chunks.append(unichr(c))
 
         pos = end
