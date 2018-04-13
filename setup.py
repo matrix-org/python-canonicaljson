@@ -47,7 +47,7 @@ setup(
     description="Canonical JSON",
     install_requires=[
         "simplejson>=3.6.5",
-        "frozendict>=0.4",
+        "frozendict>=1.0",
         "six",
     ],
     zip_safe=True,
