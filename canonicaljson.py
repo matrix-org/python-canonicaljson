@@ -16,7 +16,7 @@
 # limitations under the License.
 
 import re
-from six import unichr, PY2
+from six import unichr, PY2, PY3
 
 # using simplejson rather than regular json gives approximately a 100%
 # performance improvement (as measured on python 2.7.12/simplejson 3.13.2)
@@ -103,19 +103,29 @@ def _unascii(s):
             # match
             chunks.append(s[pos:end])
         else:
-            # \uNNNN, but we have to watch out for surrogate pairs
+            # \uNNNN, but we have to watch out for surrogate pairs.
+            #
+            # On python 2, str.encode("utf-8") will decode utf-16 surrogates
+            # before re-encoding, so it's fine for us to pass the surrogates
+            # through. (Indeed we must, to deal with UCS-2 python builds, per
+            # https://github.com/matrix-org/python-canonicaljson/issues/12).
+            #
+            # On python 3, str.encode("utf-8") complains about surrogates, so
+            # we have to unpack them.
             c = int(g, 16)
 
             if c < 0x20:
                 # leave as a \uNNNN escape
                 chunks.append(s[pos:end])
             else:
-                if c & 0xfc00 == 0xd800 and s[end:end + 2] == '\\u':
-                    esc2 = s[end + 2:end + 6]
-                    c2 = int(esc2, 16)
-                    if c2 & 0xfc00 == 0xdc00:
-                        c = 0x10000 + (((c - 0xd800) << 10) | (c2 - 0xdc00))
-                        end += 6
+                if PY3:   # pragma nocover
+                    if c & 0xfc00 == 0xd800 and s[end:end + 2] == '\\u':
+                        esc2 = s[end + 2:end + 6]
+                        c2 = int(esc2, 16)
+                        if c2 & 0xfc00 == 0xdc00:
+                            c = 0x10000 + (((c - 0xd800) << 10) |
+                                           (c2 - 0xdc00))
+                            end += 6
 
                 chunks.append(s[pos:start])
                 chunks.append(unichr(c))
