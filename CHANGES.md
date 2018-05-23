@@ -1,3 +1,8 @@
+Version 1.1.4 released 2018-05-23
+
+ * Fix error when encoding non-BMP characters on UCS-2 python builds
+   (fixes issue #12).
+
 Version 1.1.3 released 2018-04-13
 
  * Bump depencency on frozendict to >=1.0, to fix conflicts with older
