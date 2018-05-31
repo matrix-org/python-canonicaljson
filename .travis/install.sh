@@ -8,13 +8,13 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
         py27)
             # for py27, use the system python
             sudo `dirname $0`/get-pip.py
-            sudo pip install tox
+            sudo pip install -U tox
             ;;
         py36)
             # for py36, use homebrew python, which comes with pip.
             # see also https://docs.brew.sh/Homebrew-and-Python
             brew upgrade python
-            pip3 install tox
+            pip3 install -U tox
             ;;
         *)
             echo "TOXENV ${TOXENV} not supported on osx" >&2
@@ -24,5 +24,3 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 else
     pip install tox
 fi
-
-
