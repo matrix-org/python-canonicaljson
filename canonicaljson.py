@@ -16,11 +16,18 @@
 # limitations under the License.
 
 import re
+import platform
 from six import unichr, PY2, PY3
 
-# using simplejson rather than regular json gives approximately a 100%
-# performance improvement (as measured on python 2.7.12/simplejson 3.13.2)
-import simplejson as json
+if platform.python_implementation() == "PyPy":
+    # pypy ships with an optimised JSON encoder/decoder that is faster than
+    # simplejson's C extension.
+    import json
+else:
+    # using simplejson rather than regular json on CPython gives approximately
+    # a 100% performance improvement (as measured on python 2.7.12/simplejson
+    # 3.13.2)
+    import simplejson as json
 
 from frozendict import frozendict
 
