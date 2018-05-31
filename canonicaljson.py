@@ -19,17 +19,18 @@ import re
 import platform
 from six import unichr, PY2, PY3
 
-if platform.python_implementation() == "PyPy":
+from frozendict import frozendict
+
+if platform.python_implementation() == "PyPy": # pragma: no cover
     # pypy ships with an optimised JSON encoder/decoder that is faster than
     # simplejson's C extension.
     import json
-else:
+else: # pragma: no cover
     # using simplejson rather than regular json on CPython gives approximately
     # a 100% performance improvement (as measured on python 2.7.12/simplejson
     # 3.13.2)
     import simplejson as json
 
-from frozendict import frozendict
 
 __version__ = '1.1.4'
 
