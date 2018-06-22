@@ -24,5 +24,3 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
 else
     pip install tox
 fi
-
-
