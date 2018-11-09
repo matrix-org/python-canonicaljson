@@ -78,3 +78,42 @@ class TestCanonicalJson(unittest.TestCase):
         unknown_object = Unknown()
         with self.assertRaises(Exception):
             encode_canonical_json(unknown_object)
+
+
+class TestFloatCanonicalJson(unittest.TestCase):
+
+    def test_serialize_nan_and_infinity_as_null(self):
+        self.assertEquals(
+            encode_canonical_json(float('nan'), allow_floats=True),
+            b'null'
+        )
+        self.assertEquals(
+            encode_canonical_json(float('inf'), allow_floats=True),
+            b'null'
+        )
+        self.assertEquals(
+            encode_canonical_json(-float('inf'), allow_floats=True),
+            b'null'
+        )
+
+    def test_uses_scientific_notation(self):
+        samples = [
+            (0, b'0'),
+            (0.00099, b'0.00099'),
+            (0.000011, b'0.000011'),
+            (0.0000011, b'0.0000011'),
+            (0.000001, b'0.000001'),
+            (0.00000099, b'9.9e-7'),
+            (0.0000001, b'1e-7'),
+            (0.000000930258908, b'9.30258908e-7'),
+            (0.00000000000068272, b'6.8272e-13'),
+            (10 ** 20, b'100000000000000000000'),
+            (10 ** 21, b'1e+21'),
+            (10 ** 16 * 1.1, b'11000000000000000'),
+            ("frequency at 10.0e+04", b'"frequency at 10.0e+04"'),
+        ]
+        for number, string in samples:
+            self.assertEquals(
+                encode_canonical_json(number, allow_floats=True),
+                string
+            )

@@ -17,6 +17,7 @@
 
 import re
 import platform
+from json import encoder as json_encoder
 from six import unichr, PY2, PY3
 
 from frozendict import frozendict
@@ -44,6 +45,44 @@ def _default(obj):
                     obj.__class__.__name__)
 
 
+def numberstr(o):
+    """
+    Mimic JavaScript Number#toString()
+    """
+    if o != o or o == json_encoder.INFINITY or o == -json_encoder.INFINITY:
+        return "null"
+    elif 0 < o < 10 ** -6 or o >= 10 ** 21:
+        fnative = format(o, ".8e")
+        # 1.0e-04 --> 1e-4
+        return re.sub(r"(\.?0*)e([\-+])0?", r"e\2", fnative)
+    fnative = format(o, ".8f").lstrip()
+    # 23.0 --> 23
+    return re.sub(r"\.?0+$", "", fnative)
+
+
+class FloatEncoder(json.JSONEncoder):
+
+    def iterencode(self, o, _one_shot=False):
+        # Rip-off from repo of CPython 3.7.1
+        # https://github.com/python/cpython/blob/v3.7.1/Lib/json/encoder.py#L204-L257
+        markers = None
+        _encoder = json_encoder.encode_basestring_ascii
+        _iterencode = json_encoder._make_iterencode(
+            markers,
+            self.default,
+            _encoder,
+            self.indent,
+            numberstr,
+            self.key_separator,
+            self.item_separator,
+            self.sort_keys,
+            self.skipkeys,
+            _one_shot,
+            _intstr=numberstr,
+        )
+        return _iterencode(o, 0)
+
+
 # ideally we'd set ensure_ascii=False, but the ensure_ascii codepath is so
 # much quicker (assuming c speedups are enabled) that it's actually much
 # quicker to let it do that and then substitute back (it's about 2.5x faster).
@@ -51,19 +90,17 @@ def _default(obj):
 # (in any case, simplejson's ensure_ascii doesn't get U+2028 and U+2029 right,
 # as per https://github.com/simplejson/simplejson/issues/206).
 #
-_canonical_encoder = json.JSONEncoder(
-    ensure_ascii=True,
-    separators=(',', ':'),
-    sort_keys=True,
-    default=_default,
-)
 
-_pretty_encoder = json.JSONEncoder(
+_encoder_kwargs = dict(
     ensure_ascii=True,
-    indent=4,
     sort_keys=True,
     default=_default,
 )
+_canonical_encoder = json.JSONEncoder(separators=(',', ':'), **_encoder_kwargs)
+_pretty_encoder = json.JSONEncoder(indent=4, **_encoder_kwargs)
+_canonical_encoder_f = FloatEncoder(separators=(',', ':'), **_encoder_kwargs)
+_pretty_encoder_f = FloatEncoder(indent=4, **_encoder_kwargs)
+
 
 # This regexp matches either `\uNNNN` or `\\`. We match '\\' (and leave it
 # unchanged) to make sure that the regex doesn't accidentally capture the uNNNN
@@ -147,20 +184,29 @@ def _unascii(s):
     return (''.join(chunks)).encode("utf-8")
 
 
-def encode_canonical_json(json_object):
+def encode_canonical_json(json_object, allow_floats=False):
     """Encodes the shortest UTF-8 JSON encoding with dictionary keys
     lexicographically sorted by unicode code point.
 
     Args:
         json_object (dict): The JSON object to encode.
+        allow_floats (bool): Treat floats as JavaScript Number#toString().
 
     Returns:
         bytes encoding the JSON object"""
-    s = _canonical_encoder.encode(json_object)
+    encoder = _canonical_encoder_f if allow_floats else _canonical_encoder
+    s = encoder.encode(json_object)
     return _unascii(s)
 
 
-def encode_pretty_printed_json(json_object):
-    """Encodes the JSON object dict as human readable ascii bytes."""
+def encode_pretty_printed_json(json_object, allow_floats=False):
+    """Encodes the JSON object dict as human readable ascii bytes.
 
-    return _pretty_encoder.encode(json_object).encode("ascii")
+    Args:
+        json_object (dict): The JSON object to encode.
+        allow_floats (bool): Treat floats as JavaScript Number#toString().
+
+    Returns:
+        bytes encoding the JSON object"""
+    encoder = _pretty_encoder_f if allow_floats else _pretty_encoder
+    return encoder.encode(json_object).encode("ascii")
