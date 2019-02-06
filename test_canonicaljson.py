@@ -28,47 +28,47 @@ import unittest
 class TestCanonicalJson(unittest.TestCase):
 
     def test_encode_canonical(self):
-        self.assertEquals(encode_canonical_json({}), b'{}')
+        self.assertEqual(encode_canonical_json({}), b'{}')
 
         # ctrl-chars should be encoded.
-        self.assertEquals(
+        self.assertEqual(
             encode_canonical_json(u"text\u0003\r\n"),
             b'"text\\u0003\\r\\n"',
         )
 
         # quotes and backslashes should be escaped.
-        self.assertEquals(
+        self.assertEqual(
             encode_canonical_json(r'"\ test'),
             b'"\\"\\\\ test"',
         )
 
         # non-ascii should come out utf8-encoded.
-        self.assertEquals(encode_canonical_json({
+        self.assertEqual(encode_canonical_json({
                 u"la merde amusée": u"💩",
         }), b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}')
 
         # so should U+2028 and U+2029
-        self.assertEquals(
+        self.assertEqual(
             encode_canonical_json({u"spaces": u"\u2028 \u2029"}),
             b'{"spaces":"\xe2\x80\xa8 \xe2\x80\xa9"}',
         )
 
         # but we need to watch out for 'u1234' after backslash, which should
         # get encoded to an escaped backslash, followed by u1234
-        self.assertEquals(
+        self.assertEqual(
             encode_canonical_json(u"\\u1234"),
             b'"\\\\u1234"',
         )
 
     def test_encode_pretty_printed(self):
-        self.assertEquals(encode_pretty_printed_json({}), b'{}')
+        self.assertEqual(encode_pretty_printed_json({}), b'{}')
 
     def test_frozen_dict(self):
-        self.assertEquals(
+        self.assertEqual(
             encode_canonical_json(frozendict({"a": 1})),
             b'{"a":1}',
         )
-        self.assertEquals(
+        self.assertEqual(
             encode_pretty_printed_json(frozendict({"a": 1})),
             b'{\n    "a": 1\n}')
 
