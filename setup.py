@@ -47,7 +47,6 @@ setup(
     description="Canonical JSON",
     install_requires=[
         "frozendict>=1.0",
-        "six",
     ],
     zip_safe=True,
     long_description=read_file(("README.rst",)),
