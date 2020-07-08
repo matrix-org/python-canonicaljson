@@ -14,22 +14,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 import re
-import platform
 from six import unichr, PY2, PY3
 
 from frozendict import frozendict
-
-if platform.python_implementation() == "PyPy":  # pragma: no cover
-    # pypy ships with an optimised JSON encoder/decoder that is faster than
-    # simplejson's C extension.
-    import json
-else:  # pragma: no cover
-    # using simplejson rather than regular json on CPython gives approximately
-    # a 100% performance improvement (as measured on python 2.7.12/simplejson
-    # 3.13.2)
-    import simplejson as json
 
 
 __version__ = '1.1.4'
