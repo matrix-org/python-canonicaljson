@@ -10,8 +10,8 @@ if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
             sudo `dirname $0`/get-pip.py
             sudo pip install tox
             ;;
-        py36)
-            # for py36, use homebrew python, which comes with pip.
+        py38)
+            # for py38, use homebrew python, which comes with pip.
             # see also https://docs.brew.sh/Homebrew-and-Python
             brew upgrade python
             pip3 install tox
