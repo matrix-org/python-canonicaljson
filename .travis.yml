@@ -5,21 +5,11 @@ cache: pip
 
 matrix:
   include:
-    - python: 2.7
+    - python: 3.6
       env: TOXENV=packaging
-      
-    - python: 2.7
-      env: TOXENV=pep8
 
     - python: 3.6
-      env: TOXENV=py3pep8
-
-    - python: 2.7
-      env: TOXENV=py27
-
-    - os: osx
-      language: generic
-      env: TOXENV=py27
+      env: TOXENV=pep8
 
     - python: 3.5
       env: TOXENV=py35
@@ -37,8 +27,8 @@ matrix:
       language: generic
       env: TOXENV=py38
 
-    - python: pypy
-      env: TOXENV=pypy
+    - python: pypy3
+      env: TOXENV=pypy3
 
 install:
 - ./.travis/install.sh
