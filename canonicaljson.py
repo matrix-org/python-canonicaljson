@@ -21,17 +21,6 @@ from six import unichr, PY2, PY3
 
 from frozendict import frozendict
 
-if platform.python_implementation() == "PyPy":  # pragma: no cover
-    # pypy ships with an optimised JSON encoder/decoder that is faster than
-    # simplejson's C extension.
-    import json
-else:  # pragma: no cover
-    # using simplejson rather than regular json on CPython gives approximately
-    # a 100% performance improvement (as measured on python 2.7.12/simplejson
-    # 3.13.2)
-    import simplejson as json
-
-
 __version__ = '1.1.4'
 
 
@@ -51,19 +40,35 @@ def _default(obj):
 # (in any case, simplejson's ensure_ascii doesn't get U+2028 and U+2029 right,
 # as per https://github.com/simplejson/simplejson/issues/206).
 #
-_canonical_encoder = json.JSONEncoder(
-    ensure_ascii=True,
-    separators=(',', ':'),
-    sort_keys=True,
-    default=_default,
-)
 
-_pretty_encoder = json.JSONEncoder(
-    ensure_ascii=True,
-    indent=4,
-    sort_keys=True,
-    default=_default,
-)
+# Declare these in the module scope, but they get configured in
+# set_json_library.
+_canonical_encoder = None
+_pretty_encoder = None
+
+
+def set_json_library(json_lib):
+    """
+    Set the encoders for canonicaljson to json_lib.
+
+    Params:
+        json_lib: The module to use for JSON encoding, Must have a
+            `JSONEncoder` property.
+    """
+    globals()["_canonical_encoder"] = json_lib.JSONEncoder(
+        ensure_ascii=True,
+        separators=(',', ':'),
+        sort_keys=True,
+        default=_default,
+    )
+
+    globals()["_pretty_encoder"] = json_lib.JSONEncoder(
+        ensure_ascii=True,
+        indent=4,
+        sort_keys=True,
+        default=_default,
+    )
+
 
 # This regexp matches either `\uNNNN` or `\\`. We match '\\' (and leave it
 # unchanged) to make sure that the regex doesn't accidentally capture the uNNNN
@@ -164,3 +169,17 @@ def encode_pretty_printed_json(json_object):
     """Encodes the JSON object dict as human readable ascii bytes."""
 
     return _pretty_encoder.encode(json_object).encode("ascii")
+
+
+if platform.python_implementation() == "PyPy":  # pragma: no cover
+    # pypy ships with an optimised JSON encoder/decoder that is faster than
+    # simplejson's C extension.
+    import json
+else:  # pragma: no cover
+    # using simplejson rather than regular json on CPython gives approximately
+    # a 100% performance improvement (as measured on python 2.7.12/simplejson
+    # 3.13.2)
+    import simplejson as json
+
+# Set the initial value for backwards compatibility.
+set_json_library(json)
