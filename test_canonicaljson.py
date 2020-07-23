@@ -18,11 +18,13 @@
 from canonicaljson import (
     encode_canonical_json,
     encode_pretty_printed_json,
+    set_json_library,
 )
 
 from frozendict import frozendict
 
 import unittest
+from unittest import mock
 
 
 class TestCanonicalJson(unittest.TestCase):
@@ -78,3 +80,15 @@ class TestCanonicalJson(unittest.TestCase):
         unknown_object = Unknown()
         with self.assertRaises(Exception):
             encode_canonical_json(unknown_object)
+
+    def test_set_json(self):
+        """Ensure that changing the underlying JSON implementation works."""
+        mock_json = mock.Mock(spec=["JSONEncoder"])
+        mock_json.JSONEncoder.return_value.encode.return_value = "sentinel value"
+        try:
+            set_json_library(mock_json)
+            self.assertEqual(encode_canonical_json({}), b"sentinel value")
+        finally:
+            # Reset the JSON library to whatever was originally set.
+            from canonicaljson import json
+            set_json_library(json)

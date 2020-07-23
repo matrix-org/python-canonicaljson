@@ -49,20 +49,22 @@ _pretty_encoder = None
 
 def set_json_library(json_lib):
     """
-    Set the encoders for canonicaljson to json_lib.
+    Set the underlying JSON library that canonicaljson uses to json_lib.
 
     Params:
         json_lib: The module to use for JSON encoding, Must have a
             `JSONEncoder` property.
     """
-    globals()["_canonical_encoder"] = json_lib.JSONEncoder(
+    global _canonical_encoder
+    _canonical_encoder = json_lib.JSONEncoder(
         ensure_ascii=True,
         separators=(',', ':'),
         sort_keys=True,
         default=_default,
     )
 
-    globals()["_pretty_encoder"] = json_lib.JSONEncoder(
+    global _pretty_encoder
+    _pretty_encoder = json_lib.JSONEncoder(
         ensure_ascii=True,
         indent=4,
         sort_keys=True,
@@ -181,5 +183,5 @@ else:  # pragma: no cover
     # 3.13.2)
     import simplejson as json
 
-# Set the initial value for backwards compatibility.
+# Set the JSON library to the backwards compatible version.
 set_json_library(json)
