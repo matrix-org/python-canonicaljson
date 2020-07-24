@@ -51,7 +51,7 @@ def set_json_library(json_lib):
     Set the underlying JSON library that canonicaljson uses to json_lib.
 
     Params:
-        json_lib: The module to use for JSON encoding, Must have a
+        json_lib: The module to use for JSON encoding. Must have a
             `JSONEncoder` property.
     """
     global _canonical_encoder
