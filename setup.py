@@ -48,7 +48,6 @@ setup(
     install_requires=[
         "simplejson>=3.6.5",
         "frozendict>=1.0",
-        "six",
     ],
     zip_safe=True,
     long_description=read_file(("README.rst",)),
