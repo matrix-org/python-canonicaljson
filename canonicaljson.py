@@ -82,8 +82,8 @@ def _unascii(s):
     """
 
     # make the fast path fast: if there are no matches in the string, the
-    # whole thing is ascii. On python 2, that means we're done. On python 3,
-    # we have to turn it into a bytes, which is quickest with encode('utf-8')
+    # whole thing is ascii. We have to turn it into a bytes, which is
+    # quickest with encode('utf-8')
     m = _U_ESCAPE.search(s)
     if not m:
         return s.encode('utf-8')
@@ -112,13 +112,8 @@ def _unascii(s):
         else:
             # \uNNNN, but we have to watch out for surrogate pairs.
             #
-            # On python 2, str.encode("utf-8") will decode utf-16 surrogates
-            # before re-encoding, so it's fine for us to pass the surrogates
-            # through. (Indeed we must, to deal with UCS-2 python builds, per
-            # https://github.com/matrix-org/python-canonicaljson/issues/12).
-            #
-            # On python 3, str.encode("utf-8") complains about surrogates, so
-            # we have to unpack them.
+            # str.encode("utf-8") complains about surrogates, so we have to
+            # unpack them.
             c = int(g, 16)
 
             if c < 0x20:
