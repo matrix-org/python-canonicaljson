@@ -171,9 +171,12 @@ if platform.python_implementation() == "PyPy":  # pragma: no cover
     # simplejson's C extension.
     import json
 else:  # pragma: no cover
-    # using simplejson rather than regular json on CPython gives approximately
-    # a 100% performance improvement (as measured on python 2.7.12/simplejson
-    # 3.13.2)
+    # using simplejson rather than regular json on CPython for backwards
+    # compatibility (simplejson on Python 3.5 handles parsing of bytes while the
+    # standard library json does not).
+    #
+    # Note that it seems performance is on par or better using json from the
+    # standard library as of Python 3.7.
     import simplejson as json
 
 # Set the JSON library to the backwards compatible version.
