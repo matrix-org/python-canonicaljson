@@ -38,3 +38,18 @@ Using
 
     import canonicaljson
     assert canonicaljson.encode_canonical_json({}) == b'{}'
+
+The underlying JSON implementation can be choosen with the following:
+
+.. code:: python
+
+    import json
+    import canonicaljson
+    canonicaljson.set_json_library(json)
+
+.. note::
+
+    By default canonicaljson uses `simplejson`_ under the hood (except for PyPy,
+    which uses the standard library json module).
+
+.. _simplejson: https://simplejson.readthedocs.io/
