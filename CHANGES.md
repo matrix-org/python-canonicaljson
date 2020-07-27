@@ -1,3 +1,10 @@
+Version 1.2.0 released 2020-07-27
+
+* JSON from the standard library is used automatically on PyPy.
+* Support for Python versions which are end-of-lifed was dropped, Python >= 3.5
+  is supported and tested in continuous integration.
+* An API to configure the underlying JSON library was added (`set_json_library`).
+
 Version 1.1.4 released 2018-05-23
 
  * Fix error when encoding non-BMP characters on UCS-2 python builds
@@ -21,9 +28,9 @@ Version 1.1.1 released 2018-04-11
 Version 1.1.0 released 2018-04-06
 
  * Significant performance improvements
-   (https://github.com/matrix-org/python-canonicaljson/pull/7,
-   https://github.com/matrix-org/python-canonicaljson/pull/8,
-   https://github.com/matrix-org/python-canonicaljson/pull/9)
+   ([\#7](https://github.com/matrix-org/python-canonicaljson/pull/7),
+   [\#8](https://github.com/matrix-org/python-canonicaljson/pull/8),
+   [\#9](https://github.com/matrix-org/python-canonicaljson/pull/9))
 
 Version 1.0.0 released 2015-08-21
 
