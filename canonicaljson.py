@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
 import platform
 
 from frozendict import frozendict
@@ -61,12 +60,6 @@ def set_json_library(json_lib):
         sort_keys=True,
         default=_default,
     )
-
-
-# This regexp matches either `\uNNNN` or `\\`. We match '\\' (and leave it
-# unchanged) to make sure that the regex doesn't accidentally capture the uNNNN
-# in `\\uNNNN`, which is an escaped backslash followed by 'uNNNN'.
-_U_ESCAPE = re.compile(r"\\u([0-9a-f]{4})|\\\\")
 
 
 def encode_canonical_json(json_object):
