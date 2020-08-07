@@ -46,7 +46,7 @@ setup(
     py_modules=["canonicaljson"],
     description="Canonical JSON",
     install_requires=[
-        "simplejson>=3.6.5",
+        "simplejson>=3.14.0",
         "frozendict>=1.0",
     ],
     zip_safe=True,
