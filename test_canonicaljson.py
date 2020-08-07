@@ -84,13 +84,20 @@ class TestCanonicalJson(unittest.TestCase):
         # Others go to the \uXXXX.
         hex_escaped = list(range(0x08)) + [0x0B] + list(range(0x0E, 0x20))
         for c in hex_escaped:
-            self.assertEqual(encode_canonical_json(chr(c)), b'"\\u00%02x"' % (c,))
+            self.assertEqual(
+                encode_canonical_json(chr(c)),
+                b'"\\u00%02x"' % (c,)
+            )
 
         # And other characters are passed unescaped.
-        unescaped = [0x20, 0x21] + list(range(0x23, 0x5C)) + list(range(0x5D, 0x7E))
+        unescaped = (
+            [0x20, 0x21] + list(range(0x23, 0x5C)) + list(range(0x5D, 0x7E)))
         for c in unescaped:
             c = chr(c)
-            self.assertEqual(encode_canonical_json(c), b'"' + c.encode("ascii") + b'"')
+            self.assertEqual(
+                encode_canonical_json(c),
+                b'"' + c.encode("ascii") + b'"'
+            )
 
     def test_encode_pretty_printed(self):
         self.assertEqual(encode_pretty_printed_json({}), b'{}')
