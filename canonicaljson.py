@@ -85,7 +85,7 @@ def iterencode_canonical_json(json_object):
     Returns:
         generator which yields bytes encoding the JSON object"""
     for chunk in _canonical_encoder.iterencode(json_object):
-        yield _unascii(chunk)
+        yield chunk.encode("utf-8")
 
 
 def encode_pretty_printed_json(json_object):
