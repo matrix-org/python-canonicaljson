@@ -45,16 +45,6 @@ def set_json_library(json_lib):
         json_lib: The module to use for JSON encoding. Must have a
             `JSONEncoder` property.
     """
-
-    # ideally we'd set ensure_ascii=False, but the ensure_ascii codepath is so
-    # much quicker (assuming c speedups are enabled) that it's actually much
-    # quicker to let it do that and then substitute back (it's about 2.5x
-    # faster).
-    #
-    # (in any case, simplejson's ensure_ascii doesn't get U+2028 and U+2029
-    # right, as per https://github.com/simplejson/simplejson/issues/206).
-    #
-
     global _canonical_encoder
     _canonical_encoder = json_lib.JSONEncoder(
         ensure_ascii=False,
