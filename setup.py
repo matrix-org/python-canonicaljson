@@ -46,7 +46,9 @@ setup(
     py_modules=["canonicaljson"],
     description="Canonical JSON",
     install_requires=[
-        "simplejson>=3.6.5",
+        # simplerjson versions before 3.14.0 had a bug with some characters
+        # (e.g. \u2028) if ensure_ascii was set to false.
+        "simplejson>=3.14.0",
         "frozendict>=1.0",
     ],
     zip_safe=True,
