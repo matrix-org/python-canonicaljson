@@ -75,10 +75,43 @@ def encode_canonical_json(json_object):
     return s.encode("utf-8")
 
 
+def iterencode_canonical_json(json_object):
+    """Encodes the shortest UTF-8 JSON encoding with dictionary keys
+    lexicographically sorted by unicode code point.
+
+    Args:
+        json_object (dict): The JSON object to encode.
+
+    Returns:
+        generator which yields bytes encoding the JSON object"""
+    for chunk in _canonical_encoder.iterencode(json_object):
+        yield chunk.encode("utf-8")
+
+
 def encode_pretty_printed_json(json_object):
-    """Encodes the JSON object dict as human readable ascii bytes."""
+    """
+    Encodes the JSON object dict as human readable ascii bytes.
+
+    Args:
+        json_object (dict): The JSON object to encode.
+
+    Returns:
+        bytes encoding the JSON object"""
 
     return _pretty_encoder.encode(json_object).encode("ascii")
+
+
+def iterencode_pretty_printed_json(json_object):
+    """Encodes the JSON object dict as human readable ascii bytes.
+
+    Args:
+        json_object (dict): The JSON object to encode.
+
+    Returns:
+        generator which yields bytes encoding the JSON object"""
+
+    for chunk in _pretty_encoder.iterencode(json_object):
+        yield chunk.encode("ascii")
 
 
 if platform.python_implementation() == "PyPy":  # pragma: no cover

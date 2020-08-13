@@ -18,6 +18,8 @@
 from canonicaljson import (
     encode_canonical_json,
     encode_pretty_printed_json,
+    iterencode_canonical_json,
+    iterencode_pretty_printed_json,
     set_json_library,
 )
 
@@ -62,6 +64,9 @@ class TestCanonicalJson(unittest.TestCase):
             b'"\\\\u1234"',
         )
 
+        # Iteratively encoding should work.
+        self.assertEqual(list(iterencode_canonical_json({})), [b'{}'])
+
     def test_ascii(self):
         """
         Ensure the proper ASCII characters are escaped.
@@ -101,6 +106,7 @@ class TestCanonicalJson(unittest.TestCase):
 
     def test_encode_pretty_printed(self):
         self.assertEqual(encode_pretty_printed_json({}), b'{}')
+        self.assertEqual(list(iterencode_pretty_printed_json({})), [b'{}'])
 
     def test_frozen_dict(self):
         self.assertEqual(

@@ -34,12 +34,21 @@ Installing
 Using
 -----
 
+To encode an object into the canonicaljson:
+
 .. code:: python
 
     import canonicaljson
     assert canonicaljson.encode_canonical_json({}) == b'{}'
 
-The underlying JSON implementation can be choosen with the following:
+There's also an iterator version:
+
+.. code:: python
+
+    import canonicaljson
+    assert b''.join(canonicaljson.iterencode_canonical_json({})) == b'{}'
+
+The underlying JSON implementation can be chosen with the following:
 
 .. code:: python
 
