@@ -30,26 +30,24 @@ from unittest import mock
 
 
 class TestCanonicalJson(unittest.TestCase):
-
     def test_encode_canonical(self):
-        self.assertEqual(encode_canonical_json({}), b'{}')
+        self.assertEqual(encode_canonical_json({}), b"{}")
 
         # ctrl-chars should be encoded.
         self.assertEqual(
-            encode_canonical_json(u"text\u0003\r\n"),
-            b'"text\\u0003\\r\\n"',
+            encode_canonical_json(u"text\u0003\r\n"), b'"text\\u0003\\r\\n"',
         )
 
         # quotes and backslashes should be escaped.
         self.assertEqual(
-            encode_canonical_json(r'"\ test'),
-            b'"\\"\\\\ test"',
+            encode_canonical_json(r'"\ test'), b'"\\"\\\\ test"',
         )
 
         # non-ascii should come out utf8-encoded.
-        self.assertEqual(encode_canonical_json({
-                u"la merde amusée": u"💩",
-        }), b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}')
+        self.assertEqual(
+            encode_canonical_json({u"la merde amusée": u"💩",}),
+            b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}',
+        )
 
         # so should U+2028 and U+2029
         self.assertEqual(
@@ -60,12 +58,11 @@ class TestCanonicalJson(unittest.TestCase):
         # but we need to watch out for 'u1234' after backslash, which should
         # get encoded to an escaped backslash, followed by u1234
         self.assertEqual(
-            encode_canonical_json(u"\\u1234"),
-            b'"\\\\u1234"',
+            encode_canonical_json(u"\\u1234"), b'"\\\\u1234"',
         )
 
         # Iteratively encoding should work.
-        self.assertEqual(list(iterencode_canonical_json({})), [b'{}'])
+        self.assertEqual(list(iterencode_canonical_json({})), [b"{}"])
 
     def test_ascii(self):
         """
@@ -89,37 +86,30 @@ class TestCanonicalJson(unittest.TestCase):
         # Others go to the \uXXXX.
         hex_escaped = list(range(0x08)) + [0x0B] + list(range(0x0E, 0x20))
         for c in hex_escaped:
-            self.assertEqual(
-                encode_canonical_json(chr(c)),
-                b'"\\u00%02x"' % (c,)
-            )
+            self.assertEqual(encode_canonical_json(chr(c)), b'"\\u00%02x"' % (c,))
 
         # And other characters are passed unescaped.
-        unescaped = (
-            [0x20, 0x21] + list(range(0x23, 0x5C)) + list(range(0x5D, 0x7E)))
+        unescaped = [0x20, 0x21] + list(range(0x23, 0x5C)) + list(range(0x5D, 0x7E))
         for c in unescaped:
             c = chr(c)
-            self.assertEqual(
-                encode_canonical_json(c),
-                b'"' + c.encode("ascii") + b'"'
-            )
+            self.assertEqual(encode_canonical_json(c), b'"' + c.encode("ascii") + b'"')
 
     def test_encode_pretty_printed(self):
-        self.assertEqual(encode_pretty_printed_json({}), b'{}')
-        self.assertEqual(list(iterencode_pretty_printed_json({})), [b'{}'])
+        self.assertEqual(encode_pretty_printed_json({}), b"{}")
+        self.assertEqual(list(iterencode_pretty_printed_json({})), [b"{}"])
 
     def test_frozen_dict(self):
         self.assertEqual(
-            encode_canonical_json(frozendict({"a": 1})),
-            b'{"a":1}',
+            encode_canonical_json(frozendict({"a": 1})), b'{"a":1}',
         )
         self.assertEqual(
-            encode_pretty_printed_json(frozendict({"a": 1})),
-            b'{\n    "a": 1\n}')
+            encode_pretty_printed_json(frozendict({"a": 1})), b'{\n    "a": 1\n}'
+        )
 
     def test_unknown_type(self):
         class Unknown(object):
             pass
+
         unknown_object = Unknown()
         with self.assertRaises(Exception):
             encode_canonical_json(unknown_object)
@@ -134,4 +124,5 @@ class TestCanonicalJson(unittest.TestCase):
         finally:
             # Reset the JSON library to whatever was originally set.
             from canonicaljson import json
+
             set_json_library(json)

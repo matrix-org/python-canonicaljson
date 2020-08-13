@@ -19,7 +19,7 @@ import platform
 
 from frozendict import frozendict
 
-__version__ = '1.2.0'
+__version__ = "1.2.0"
 
 
 def _default(obj):
@@ -27,8 +27,9 @@ def _default(obj):
         # fishing the protected dict out of the object is a bit nasty,
         # but we don't really want the overhead of copying the dict.
         return obj._dict
-    raise TypeError('Object of type %s is not JSON serializable' %
-                    obj.__class__.__name__)
+    raise TypeError(
+        "Object of type %s is not JSON serializable" % obj.__class__.__name__
+    )
 
 
 # Declare these in the module scope, but they get configured in
@@ -47,18 +48,12 @@ def set_json_library(json_lib):
     """
     global _canonical_encoder
     _canonical_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False,
-        separators=(',', ':'),
-        sort_keys=True,
-        default=_default,
+        ensure_ascii=False, separators=(",", ":"), sort_keys=True, default=_default,
     )
 
     global _pretty_encoder
     _pretty_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False,
-        indent=4,
-        sort_keys=True,
-        default=_default,
+        ensure_ascii=False, indent=4, sort_keys=True, default=_default,
     )
 
 
