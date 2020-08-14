@@ -35,7 +35,7 @@ def exec_file(path_segments, name):
     the constant and executing it."""
     result = {}
     code = read_file(path_segments)
-    lines = [line for line in code.split('\n') if line.startswith(name)]
+    lines = [line for line in code.split("\n") if line.startswith(name)]
     exec("\n".join(lines), result)
     return result[name]
 
@@ -54,16 +54,16 @@ setup(
     zip_safe=True,
     long_description=read_file(("README.rst",)),
     keywords="json",
-    author='The Matrix.org Team',
-    author_email='team@matrix.org',
-    url='https://github.com/matrix-org/python-canonicaljson',
-    license='Apache License, Version 2.0',
+    author="The Matrix.org Team",
+    author_email="team@matrix.org",
+    url="https://github.com/matrix-org/python-canonicaljson",
+    license="Apache License, Version 2.0",
     python_requires="~=3.5",
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: Apache Software License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
+        "Development Status :: 5 - Production/Stable",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
     ],
 )
