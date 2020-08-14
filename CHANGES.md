@@ -1,3 +1,9 @@
+Version 1.3.0 released 2020-08-14
+
+* The minimum version of simplejson was bumped to 3.14.0.
+* Obsolete workaround for slow encoding of Unicode characters was removed.
+* New APIs were added to iteratively encode JSON.
+
 Version 1.2.0 released 2020-07-27
 
 * JSON from the standard library is used automatically on PyPy.
