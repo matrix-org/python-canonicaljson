@@ -119,7 +119,7 @@ class TestCanonicalJson(unittest.TestCase):
             encode_pretty_printed_json(unknown_object)
 
     def test_invalid_float_values(self):
-        """Infinity/-Infinity/NaN are now allowed in canonicaljson.
+        """Infinity/-Infinity/NaN are not allowed in canonicaljson.
         """
 
         with self.assertRaises(ValueError):
