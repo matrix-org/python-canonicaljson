@@ -1,3 +1,9 @@
+Version next
+
+* Fix producing non-standard JSON for Infinity, -Infinity, and NaN. This could
+  error when encoding objects into canonical JSON that previously used to work,
+  but were incompatible with JSON implementations in other languages.
+
 Version 1.3.0 released 2020-08-14
 
 * The minimum version of simplejson was bumped to 3.14.0.
