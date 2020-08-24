@@ -99,6 +99,12 @@ class TestCanonicalJson(unittest.TestCase):
         self.assertEqual(encode_pretty_printed_json({}), b"{}")
         self.assertEqual(list(iterencode_pretty_printed_json({})), [b"{}"])
 
+        # non-ascii should come out utf8-encoded.
+        self.assertEqual(
+            encode_pretty_printed_json({u"la merde amusée": u"💩"}),
+            b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}',
+        )
+
     def test_frozen_dict(self):
         self.assertEqual(
             encode_canonical_json(frozendict({"a": 1})), b'{"a":1}',
