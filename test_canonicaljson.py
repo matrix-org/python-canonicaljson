@@ -14,6 +14,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from math import inf, nan
 
 from canonicaljson import (
     encode_canonical_json,
@@ -113,6 +114,31 @@ class TestCanonicalJson(unittest.TestCase):
         unknown_object = Unknown()
         with self.assertRaises(Exception):
             encode_canonical_json(unknown_object)
+
+        with self.assertRaises(Exception):
+            encode_pretty_printed_json(unknown_object)
+
+    def test_invalid_float_values(self):
+        """Infinity/-Infinity/NaN are not allowed in canonicaljson.
+        """
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(-inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(-inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(nan)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(nan)
 
     def test_set_json(self):
         """Ensure that changing the underlying JSON implementation works."""

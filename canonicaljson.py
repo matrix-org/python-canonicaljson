@@ -48,12 +48,16 @@ def set_json_library(json_lib):
     """
     global _canonical_encoder
     _canonical_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False, separators=(",", ":"), sort_keys=True, default=_default,
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+        default=_default,
     )
 
     global _pretty_encoder
     _pretty_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False, indent=4, sort_keys=True, default=_default,
+        ensure_ascii=False, allow_nan=False, indent=4, sort_keys=True, default=_default,
     )
 
 
