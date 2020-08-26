@@ -89,7 +89,7 @@ def iterencode_canonical_json(json_object):
 
 def encode_pretty_printed_json(json_object):
     """
-    Encodes the JSON object dict as human readable ascii bytes.
+    Encodes the JSON object dict as human readable UTF-8 bytes.
 
     Args:
         json_object (dict): The JSON object to encode.
@@ -97,11 +97,11 @@ def encode_pretty_printed_json(json_object):
     Returns:
         bytes encoding the JSON object"""
 
-    return _pretty_encoder.encode(json_object).encode("ascii")
+    return _pretty_encoder.encode(json_object).encode("utf-8")
 
 
 def iterencode_pretty_printed_json(json_object):
-    """Encodes the JSON object dict as human readable ascii bytes.
+    """Encodes the JSON object dict as human readable UTF-8 bytes.
 
     Args:
         json_object (dict): The JSON object to encode.
@@ -110,7 +110,7 @@ def iterencode_pretty_printed_json(json_object):
         generator which yields bytes encoding the JSON object"""
 
     for chunk in _pretty_encoder.iterencode(json_object):
-        yield chunk.encode("ascii")
+        yield chunk.encode("utf-8")
 
 
 if platform.python_implementation() == "PyPy":  # pragma: no cover
