@@ -1,8 +1,8 @@
-Version next
+Version 1.4.0 released 2020-09-03
 
 * Fix producing non-standard JSON for Infinity, -Infinity, and NaN. This could
-  error when encoding objects into canonical JSON that previously used to work,
-  but were incompatible with JSON implementations in other languages.
+  cause errors when encoding objects into canonical JSON that previously used to
+  work, but were incompatible with JSON implementations in other languages.
 * Use UTF-8 to fix ASCII encoding errors when data containing Unicode was
   attempted to be pretty-printed.
 
