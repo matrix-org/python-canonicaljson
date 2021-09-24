@@ -29,6 +29,9 @@ def _default(obj):
         try:
             return obj._dict
         except AttributeError:
+            # When the C implementation of frozendict is used,
+            # there isn't a `_dict` attribute with a dict
+            # so we resort to making a copy of the frozendict
             return dict(obj)
     raise TypeError(
         "Object of type %s is not JSON serializable" % obj.__class__.__name__
