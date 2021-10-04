@@ -5,9 +5,6 @@ Canonical JSON
     :target: https://pypi.python.org/pypi/canonicaljson/
     :alt: Latest Version
 
-.. image:: https://img.shields.io/travis/matrix-org/python-canonicaljson.svg
-   :target: https://travis-ci.org/matrix-org/python-canonicaljson
-
 Features
 --------
 
@@ -20,7 +17,7 @@ Features
 * Encodes the JSON as UTF-8.
 * Can encode ``frozendict`` immutable dictionaries.
 
-Supports Python versions 3.5 and newer.
+Supports Python versions 3.6 and newer.
 
 .. _`RFC 7159`: https://tools.ietf.org/html/rfc7159
 
