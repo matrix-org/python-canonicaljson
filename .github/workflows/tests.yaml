@@ -40,7 +40,7 @@ jobs:
         with:
           python-version: "3.5"
       - run: python -m pip install tox
-      - run: tox -e py365
+      - run: tox -e py35
 
   run-unit-tests-36:
     runs-on: ubuntu-latest
@@ -86,7 +86,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup=python@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: "py38"
       - run: python -m pip3 install tox
@@ -98,6 +98,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.6"
+          python-version: "3.8"
       - run: python -m pip3 install tox
       - run: tox -e packaging
