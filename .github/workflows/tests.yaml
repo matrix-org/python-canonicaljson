@@ -6,8 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - python-version: "3.6"
+        python-version: [3.6]
         toxenv:
           - "pep8"
           - "black"
@@ -15,6 +14,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - run: pip install tox
       - run: tox -e ${{ matrix.toxenv }}
 
@@ -22,26 +23,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - python-version: "3.5"
-          - python-version: "3.6"
-          - python-version: "3.7"
-          - python-version: "3.8"
-          - python-version: "3.9"
-          - python-version: "3.10"
-          - python-version: "pypy3"
-        toxenv:
-          - "py35"
-          - "py36"
-          - "py37"
-          - "py38"
-          - "py39"
-          - "py310"
-          - "pypy3"
+        python-version: ['3.5', '3.6', '3.7', '3.8', '3.9', '3.10', 'pypy-3.x']
+        toxenv: ["py35", "py36", "py37", "py38", "py39", "py310", "pypy3"]
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - run: pip install tox
       - run: tox -e ${{ matrix.toxenv }}
 
@@ -61,18 +50,14 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        include:
-          - python-version: "py38"
-          - python-version: "py39"
-          - python-version: "py310"
-        toxenv:
-          - "py38"
-          - "py39"
-          - "py310"
+        python-version: ["3.8", "3.9", "3.10"]
+        toxenv: ["py38", "py39", "py310"]
 
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - run: pip install tox
       - run: tox -e ${{ matrix.toxenv }}
 
