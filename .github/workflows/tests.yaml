@@ -2,102 +2,63 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toxenv:
+          - "pep8"
+          - "black"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
+
+  unittest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toxenv:
+          - "py35"
+          - "py36"
+          - "py37"
+          - "py38"
+          - "py39"
+          - "py310"
+          - "pypy3"
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
+
   packaging:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-        with:
-          python-version: "3.6"
       - run: python -m pip install tox
       - run: tox -e packaging
 
-  pep8:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.6"
-      - run: python -m pip install tox
-      - run: tox -e pep8
-
-  black:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.6"
-      - run: python -m pip install tox
-      - run: tox -e black
-
-  run-unit-tests-35:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.5"
-      - run: python -m pip install tox
-      - run: tox -e py35
-
-  run-unit-tests-36:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.6"
-      - run: python -m pip install tox
-      - run: tox -e py36
-
-  run-unit-tests-37:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.7"
-      - run: python -m pip install tox
-      - run: tox -e py37
-
-  run-unit-tests-38:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-      - run: python -m pip install tox
-      - run: tox -e py38
-
-  run-unit-tests-pypy3:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "pypy3"
-      - run: python -m pip install tox
-      - run: tox -e pypy3
-
-  run-unit-tests-macos:
+  macos-tests:
     runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-      - run: python -m pip install tox
-      - run: tox -e py38
+    strategy:
+      matrix:
+        toxenv:
+          - "py38"
+          - "py39"
+          - "py310"
 
-  packaging-macos:
-    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
-        with:
-          python-version: "3.8"
-      - run: python -m pip install tox
-      - run: tox -e packaging
+      - run: pip install tox
+      - run: tox -e ${{ matrix.toxenv }}
+
