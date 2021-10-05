@@ -22,7 +22,7 @@ from frozendict import frozendict
 __version__ = "1.4.0"
 
 
-def _default(obj):
+def _default(obj):  # pragma: no cover
     if type(obj) is frozendict:
         # fishing the protected dict out of the object is a bit nasty,
         # but we don't really want the overhead of copying the dict.
