@@ -1,3 +1,10 @@
+Version 1.5.0 released 2021-10-08
+
+* Switch CI from Travis to Github Actions
+* Add code to handle frozendict implementations using c-extension
+* Add tests for Python 3.10
+* Remove outdated Debian packaging code
+
 Version 1.4.0 released 2020-09-03
 
 * Fix producing non-standard JSON for Infinity, -Infinity, and NaN. This could

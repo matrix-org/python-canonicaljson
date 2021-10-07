@@ -19,7 +19,7 @@ import platform
 
 from frozendict import frozendict
 
-__version__ = "1.4.0"
+__version__ = "1.5.0"
 
 
 def _default(obj):  # pragma: no cover
