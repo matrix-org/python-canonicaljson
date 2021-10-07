@@ -36,12 +36,14 @@ class TestCanonicalJson(unittest.TestCase):
 
         # ctrl-chars should be encoded.
         self.assertEqual(
-            encode_canonical_json(u"text\u0003\r\n"), b'"text\\u0003\\r\\n"',
+            encode_canonical_json(u"text\u0003\r\n"),
+            b'"text\\u0003\\r\\n"',
         )
 
         # quotes and backslashes should be escaped.
         self.assertEqual(
-            encode_canonical_json(r'"\ test'), b'"\\"\\\\ test"',
+            encode_canonical_json(r'"\ test'),
+            b'"\\"\\\\ test"',
         )
 
         # non-ascii should come out utf8-encoded.
@@ -59,7 +61,8 @@ class TestCanonicalJson(unittest.TestCase):
         # but we need to watch out for 'u1234' after backslash, which should
         # get encoded to an escaped backslash, followed by u1234
         self.assertEqual(
-            encode_canonical_json(u"\\u1234"), b'"\\\\u1234"',
+            encode_canonical_json(u"\\u1234"),
+            b'"\\\\u1234"',
         )
 
         # Iteratively encoding should work.
@@ -107,7 +110,8 @@ class TestCanonicalJson(unittest.TestCase):
 
     def test_frozen_dict(self):
         self.assertEqual(
-            encode_canonical_json(frozendict({"a": 1})), b'{"a":1}',
+            encode_canonical_json(frozendict({"a": 1})),
+            b'{"a":1}',
         )
         self.assertEqual(
             encode_pretty_printed_json(frozendict({"a": 1})), b'{\n    "a": 1\n}'
@@ -125,8 +129,7 @@ class TestCanonicalJson(unittest.TestCase):
             encode_pretty_printed_json(unknown_object)
 
     def test_invalid_float_values(self):
-        """Infinity/-Infinity/NaN are not allowed in canonicaljson.
-        """
+        """Infinity/-Infinity/NaN are not allowed in canonicaljson."""
 
         with self.assertRaises(ValueError):
             encode_canonical_json(inf)

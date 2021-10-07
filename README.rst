@@ -5,9 +5,6 @@ Canonical JSON
     :target: https://pypi.python.org/pypi/canonicaljson/
     :alt: Latest Version
 
-.. image:: https://img.shields.io/travis/matrix-org/python-canonicaljson.svg
-   :target: https://travis-ci.org/matrix-org/python-canonicaljson
-
 Features
 --------
 
