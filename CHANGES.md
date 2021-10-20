@@ -1,4 +1,4 @@
-Version 1.5.0 released 2021-10-08
+Version 1.5.0 released 2021-10-20
 
 * Switch CI from Travis to Github Actions
 * Add code to handle frozendict implementations using c-extension
