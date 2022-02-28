@@ -14,16 +14,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import collections.abc
 import platform
+from typing import Optional, Type
 
-from frozendict import frozendict
+frozendict_type: Optional[Type]
+try:
+    from frozendict import frozendict as frozendict_type
+except ImportError:
+    frozendict_type = None
 
 __version__ = "1.5.0"
 
 
 def _default(obj):  # pragma: no cover
-    if type(obj) is frozendict:
+    if frozendict_type is None:
+        if isinstance(obj, collections.abc.Mapping):
+            # If `frozendict` could not be imported, but `obj` is a mapping,
+            # cast the object into a dict
+            return dict(obj)
+    elif type(obj) is frozendict_type:
         # fishing the protected dict out of the object is a bit nasty,
         # but we don't really want the overhead of copying the dict.
         try:
