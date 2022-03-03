@@ -14,7 +14,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from math import inf, nan
+from typing import Type, Optional
 
 from canonicaljson import (
     encode_canonical_json,
@@ -24,10 +26,14 @@ from canonicaljson import (
     set_json_library,
 )
 
-from frozendict import frozendict
-
 import unittest
 from unittest import mock
+
+frozendict_type: Optional[Type]
+try:
+    from frozendict import frozendict as frozendict_type
+except ImportError:
+    frozendict_type = None
 
 
 class TestCanonicalJson(unittest.TestCase):
@@ -109,13 +115,14 @@ class TestCanonicalJson(unittest.TestCase):
         )
 
     def test_frozen_dict(self):
-        self.assertEqual(
-            encode_canonical_json(frozendict({"a": 1})),
-            b'{"a":1}',
-        )
-        self.assertEqual(
-            encode_pretty_printed_json(frozendict({"a": 1})), b'{\n    "a": 1\n}'
-        )
+        if frozendict_type is not None:
+            self.assertEqual(
+                encode_canonical_json(frozendict_type({"a": 1})),
+                b'{"a":1}',
+            )
+            self.assertEqual(
+                encode_pretty_printed_json(frozendict_type({"a": 1})), b'{\n    "a": 1\n}'
+            )
 
     def test_unknown_type(self):
         class Unknown(object):
