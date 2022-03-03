@@ -22,27 +22,15 @@ frozendict_type: Optional[Type]
 try:
     from frozendict import frozendict as frozendict_type
 except ImportError:
-    frozendict_type = None
+    frozendict_type = None  # pragma: no cover
 
 __version__ = "1.5.0"
 
 
 def _default(obj):  # pragma: no cover
-    if frozendict_type is None:
-        if isinstance(obj, collections.abc.Mapping):
-            # If `frozendict` could not be imported, but `obj` is a mapping,
-            # cast the object into a dict
-            return dict(obj)
-    elif type(obj) is frozendict_type:
-        # fishing the protected dict out of the object is a bit nasty,
-        # but we don't really want the overhead of copying the dict.
-        try:
-            return obj._dict
-        except AttributeError:
-            # When the C implementation of frozendict is used,
-            # there isn't a `_dict` attribute with a dict
-            # so we resort to making a copy of the frozendict
-            return dict(obj)
+    if type(obj) is frozendict_type:
+        # If frozendict is available and used, cast `obj` into a dict
+        return dict(obj)
     raise TypeError(
         "Object of type %s is not JSON serializable" % obj.__class__.__name__
     )
