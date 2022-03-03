@@ -49,8 +49,11 @@ setup(
         # simplerjson versions before 3.14.0 had a bug with some characters
         # (e.g. \u2028) if ensure_ascii was set to false.
         "simplejson>=3.14.0",
-        "frozendict>=1.0",
     ],
+    extras_require={
+        # frozendict support can be enabled using the `canonicaljson[frozendict]` syntax
+        "frozendict": ["frozendict>=1.0"],
+    },
     zip_safe=True,
     long_description=read_file(("README.rst",)),
     keywords="json",
