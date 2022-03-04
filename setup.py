@@ -58,7 +58,7 @@ setup(
     author_email="team@matrix.org",
     url="https://github.com/matrix-org/python-canonicaljson",
     license="Apache License, Version 2.0",
-    python_requires="~=3.5",
+    python_requires="~=3.7",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
