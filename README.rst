@@ -17,7 +17,7 @@ Features
 * Encodes the JSON as UTF-8.
 * Can encode ``frozendict`` immutable dictionaries.
 
-Supports Python versions 3.5 and newer.
+Supports Python versions 3.7 and newer.
 
 .. _`RFC 7159`: https://tools.ietf.org/html/rfc7159
 
