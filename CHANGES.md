@@ -1,3 +1,7 @@
+Version 1.6.0 released 2022-03-04
+
+* `frozendict` is now an optional dependency; it is no longer required.
+
 Version 1.5.0 released 2021-10-20
 
 * Switch CI from Travis to Github Actions
