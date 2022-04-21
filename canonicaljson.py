@@ -59,7 +59,7 @@ class JsonLibrary(Protocol):
 # Declare these in the module scope, but they get configured in
 # set_json_library.
 _canonical_encoder: Encoder = None  # type: ignore[assignment]
-_pretty_encoder: Encoder = None   # type: ignore[assignment]
+_pretty_encoder: Encoder = None  # type: ignore[assignment]
 
 
 def set_json_library(json_lib: JsonLibrary) -> None:
