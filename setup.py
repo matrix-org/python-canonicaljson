@@ -49,6 +49,8 @@ setup(
         # simplerjson versions before 3.14.0 had a bug with some characters
         # (e.g. \u2028) if ensure_ascii was set to false.
         "simplejson>=3.14.0",
+        # typing.Protocol was only added to the stdlib in Python 3.8
+        "typing_extensions>=4.0.0; python_version < '3.8'",
     ],
     extras_require={
         # frozendict support can be enabled using the `canonicaljson[frozendict]` syntax

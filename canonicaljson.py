@@ -16,9 +16,14 @@
 # limitations under the License.
 
 import platform
-from typing import Optional, Type
+from typing import Any, Generator, Optional, Type
 
-frozendict_type: Optional[Type]
+try:
+    from typing import Protocol
+except ImportError:  # pragma: no cover
+    from typing_extensions import Protocol  # type: ignore[misc]
+
+frozendict_type: Optional[Type[Any]]
 try:
     from frozendict import frozendict as frozendict_type
 except ImportError:
@@ -27,22 +32,37 @@ except ImportError:
 __version__ = "1.6.0"
 
 
-def _default(obj):  # pragma: no cover
+def _default(obj: object) -> object:  # pragma: no cover
     if type(obj) is frozendict_type:
         # If frozendict is available and used, cast `obj` into a dict
-        return dict(obj)
+        return dict(obj)  # type: ignore[call-overload]
     raise TypeError(
         "Object of type %s is not JSON serializable" % obj.__class__.__name__
     )
 
 
+class Encoder(Protocol):  # pragma: no cover
+    def encode(self, data: object) -> str:
+        pass
+
+    def iterencode(self, data: object) -> Generator[str, None, None]:
+        pass
+
+    def __call__(self, *args: Any, **kwargs: Any) -> "Encoder":
+        pass
+
+
+class JsonLibrary(Protocol):
+    JSONEncoder: Encoder
+
+
 # Declare these in the module scope, but they get configured in
 # set_json_library.
-_canonical_encoder = None
-_pretty_encoder = None
+_canonical_encoder: Encoder = None  # type: ignore[assignment]
+_pretty_encoder: Encoder = None   # type: ignore[assignment]
 
 
-def set_json_library(json_lib):
+def set_json_library(json_lib: JsonLibrary) -> None:
     """
     Set the underlying JSON library that canonicaljson uses to json_lib.
 
@@ -69,7 +89,7 @@ def set_json_library(json_lib):
     )
 
 
-def encode_canonical_json(json_object):
+def encode_canonical_json(json_object: object) -> bytes:
     """Encodes the shortest UTF-8 JSON encoding with dictionary keys
     lexicographically sorted by unicode code point.
 
@@ -82,7 +102,7 @@ def encode_canonical_json(json_object):
     return s.encode("utf-8")
 
 
-def iterencode_canonical_json(json_object):
+def iterencode_canonical_json(json_object: object) -> Generator[bytes, None, None]:
     """Encodes the shortest UTF-8 JSON encoding with dictionary keys
     lexicographically sorted by unicode code point.
 
@@ -95,7 +115,7 @@ def iterencode_canonical_json(json_object):
         yield chunk.encode("utf-8")
 
 
-def encode_pretty_printed_json(json_object):
+def encode_pretty_printed_json(json_object: object) -> bytes:
     """
     Encodes the JSON object dict as human readable UTF-8 bytes.
 
@@ -108,7 +128,7 @@ def encode_pretty_printed_json(json_object):
     return _pretty_encoder.encode(json_object).encode("utf-8")
 
 
-def iterencode_pretty_printed_json(json_object):
+def iterencode_pretty_printed_json(json_object: object) -> Generator[bytes, None, None]:
     """Encodes the JSON object dict as human readable UTF-8 bytes.
 
     Args:
@@ -132,7 +152,7 @@ else:  # pragma: no cover
     #
     # Note that it seems performance is on par or better using json from the
     # standard library as of Python 3.7.
-    import simplejson as json
+    import simplejson as json  # type: ignore[no-redef]
 
 # Set the JSON library to the backwards compatible version.
 set_json_library(json)

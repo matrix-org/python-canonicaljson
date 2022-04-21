@@ -31,7 +31,7 @@ from unittest import mock
 
 
 class TestCanonicalJson(unittest.TestCase):
-    def test_encode_canonical(self):
+    def test_encode_canonical(self) -> None:
         self.assertEqual(encode_canonical_json({}), b"{}")
 
         # ctrl-chars should be encoded.
@@ -68,7 +68,7 @@ class TestCanonicalJson(unittest.TestCase):
         # Iteratively encoding should work.
         self.assertEqual(list(iterencode_canonical_json({})), [b"{}"])
 
-    def test_ascii(self):
+    def test_ascii(self) -> None:
         """
         Ensure the proper ASCII characters are escaped.
 
@@ -95,10 +95,10 @@ class TestCanonicalJson(unittest.TestCase):
         # And other characters are passed unescaped.
         unescaped = [0x20, 0x21] + list(range(0x23, 0x5C)) + list(range(0x5D, 0x7E))
         for c in unescaped:
-            c = chr(c)
-            self.assertEqual(encode_canonical_json(c), b'"' + c.encode("ascii") + b'"')
+            s = chr(c)
+            self.assertEqual(encode_canonical_json(s), b'"' + s.encode("ascii") + b'"')
 
-    def test_encode_pretty_printed(self):
+    def test_encode_pretty_printed(self) -> None:
         self.assertEqual(encode_pretty_printed_json({}), b"{}")
         self.assertEqual(list(iterencode_pretty_printed_json({})), [b"{}"])
 
@@ -112,7 +112,9 @@ class TestCanonicalJson(unittest.TestCase):
         frozendict_type is None,
         "If `frozendict` is not available, skip test",
     )
-    def test_frozen_dict(self):
+    def test_frozen_dict(self) -> None:
+        # For mypy's benefit:
+        assert frozendict_type is not None
         self.assertEqual(
             encode_canonical_json(frozendict_type({"a": 1})),
             b'{"a":1}',
@@ -122,7 +124,7 @@ class TestCanonicalJson(unittest.TestCase):
             b'{\n    "a": 1\n}',
         )
 
-    def test_unknown_type(self):
+    def test_unknown_type(self) -> None:
         class Unknown(object):
             pass
 
@@ -133,7 +135,7 @@ class TestCanonicalJson(unittest.TestCase):
         with self.assertRaises(Exception):
             encode_pretty_printed_json(unknown_object)
 
-    def test_invalid_float_values(self):
+    def test_invalid_float_values(self) -> None:
         """Infinity/-Infinity/NaN are not allowed in canonicaljson."""
 
         with self.assertRaises(ValueError):
@@ -154,7 +156,7 @@ class TestCanonicalJson(unittest.TestCase):
         with self.assertRaises(ValueError):
             encode_pretty_printed_json(nan)
 
-    def test_set_json(self):
+    def test_set_json(self) -> None:
         """Ensure that changing the underlying JSON implementation works."""
         mock_json = mock.Mock(spec=["JSONEncoder"])
         mock_json.JSONEncoder.return_value.encode.return_value = "sentinel"
@@ -163,6 +165,6 @@ class TestCanonicalJson(unittest.TestCase):
             self.assertEqual(encode_canonical_json({}), b"sentinel")
         finally:
             # Reset the JSON library to whatever was originally set.
-            from canonicaljson import json
+            from canonicaljson import json  # type: ignore[attr-defined]
 
             set_json_library(json)
