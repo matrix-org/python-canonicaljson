@@ -4,15 +4,3 @@ strict = true
 
 files = ["."]
 exclude = "setup.py"
-#mypy_path = "stubs"
-
-#[[tool.mypy.overrides]]
-#module = [
-#    "idna",
-#    "netaddr",
-#    "prometheus_client",
-#    "signedjson.*",
-#    "sortedcontainers",
-#]
-#ignore_missing_imports = true
-
