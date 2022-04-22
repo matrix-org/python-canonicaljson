@@ -89,55 +89,44 @@ def set_json_library(json_lib: JsonLibrary) -> None:
     )
 
 
-def encode_canonical_json(json_object: object) -> bytes:
-    """Encodes the shortest UTF-8 JSON encoding with dictionary keys
+def encode_canonical_json(data: object) -> bytes:
+    """Encodes the given `data` as a UTF-8 canonical JSON bytestring.
+
+    This encoding is the shortest possible. Dictionary keys are
     lexicographically sorted by unicode code point.
-
-    Args:
-        json_object (dict): The JSON object to encode.
-
-    Returns:
-        bytes encoding the JSON object"""
-    s = _canonical_encoder.encode(json_object)
+    """
+    s = _canonical_encoder.encode(data)
     return s.encode("utf-8")
 
 
-def iterencode_canonical_json(json_object: object) -> Generator[bytes, None, None]:
-    """Encodes the shortest UTF-8 JSON encoding with dictionary keys
+def iterencode_canonical_json(data: object) -> Generator[bytes, None, None]:
+    """Iteratively encodes the given `data` as a UTF-8 canonical JSON bytestring.
+
+    This yields one or more bytestrings; concatenating them all together yields the
+    full encoding of `data`. Building up the encoding gradually in this way allows us to
+    encode large pieces of `data` without blocking other tasks.
+
+    This encoding is the shortest possible. Dictionary keys are
     lexicographically sorted by unicode code point.
-
-    Args:
-        json_object (dict): The JSON object to encode.
-
-    Returns:
-        generator which yields bytes encoding the JSON object"""
-    for chunk in _canonical_encoder.iterencode(json_object):
+    """
+    for chunk in _canonical_encoder.iterencode(data):
         yield chunk.encode("utf-8")
 
 
-def encode_pretty_printed_json(json_object: object) -> bytes:
+def encode_pretty_printed_json(data: object) -> bytes:
+    """Encodes the given `data` as a UTF-8 human-readable JSON bytestring."""
+
+    return _pretty_encoder.encode(data).encode("utf-8")
+
+
+def iterencode_pretty_printed_json(data: object) -> Generator[bytes, None, None]:
+    """Iteratively encodes the given `data` as a UTF-8 human-readable JSON bytestring.
+
+    This yields one or more bytestrings; concatenating them all together yields the
+    full encoding of `data`. Building up the encoding gradually in this way allows us to
+    encode large pieces of `data` without blocking other tasks.
     """
-    Encodes the JSON object dict as human readable UTF-8 bytes.
-
-    Args:
-        json_object (dict): The JSON object to encode.
-
-    Returns:
-        bytes encoding the JSON object"""
-
-    return _pretty_encoder.encode(json_object).encode("utf-8")
-
-
-def iterencode_pretty_printed_json(json_object: object) -> Generator[bytes, None, None]:
-    """Encodes the JSON object dict as human readable UTF-8 bytes.
-
-    Args:
-        json_object (dict): The JSON object to encode.
-
-    Returns:
-        generator which yields bytes encoding the JSON object"""
-
-    for chunk in _pretty_encoder.iterencode(json_object):
+    for chunk in _pretty_encoder.iterencode(data):
         yield chunk.encode("utf-8")
 
 
