@@ -3,5 +3,6 @@ include *.py
 include *.md
 include LICENSE
 include tox.ini
+include pyproject.toml
 prune .travis
 prune debian

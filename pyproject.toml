@@ -1,0 +1,6 @@
+[tool.mypy]
+show_error_codes = true
+strict = true
+
+files = ["."]
+exclude = "setup.py"
