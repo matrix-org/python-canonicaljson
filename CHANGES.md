@@ -1,3 +1,17 @@
+Version 1.6.2 released 2022-06-08
+
+* Bump version to 1.6.2
+
+The v1.6.1 tag was created without having bumped the version in
+`canonicaljson.py`. This means that installing from source at the `v1.6.1` tag will
+install the package with the wrong version in its metadata. The 1.6.1 artefacts
+uploaded to PyPI did have the correct version; `pip install`ing
+directly from the archive resulted in a consistent version number.
+
+Version 1.6.1 released 2022-05-02
+
+* Add type annotations.
+
 Version 1.6.0 released 2022-03-04
 
 * `frozendict` is now an optional dependency; it is no longer required.
