@@ -1,4 +1,9 @@
 prune .github
+include *.md
+include tox.ini
+
+# Make sure typing markers are included.
+recursive-include src py.typed
 
 # Include tests in the source distribution
 recursive-include tests *.py
