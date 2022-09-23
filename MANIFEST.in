@@ -1,8 +1,4 @@
-include *.in
-include *.py
-include *.md
-include LICENSE
-include tox.ini
-include pyproject.toml
-prune .travis
-prune debian
+prune .github
+
+# Include tests in the source distribution
+recursive-include tests *.py
