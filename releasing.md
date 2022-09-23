@@ -1,7 +1,7 @@
 Releasing python-canonicaljson
 ==============================
 
-* bump version in `canonicaljson/__init__.py`
+* bump version in `src/canonicaljson/__init__.py`
 * update changelog
 * Build and upload to pypi:
   * `rm -r dist`
