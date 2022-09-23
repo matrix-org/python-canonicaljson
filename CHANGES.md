@@ -1,3 +1,7 @@
+Version 1.6.3 released 2022-09-23
+
+* Properly package the `canonicaljson` module.
+
 Version 1.6.2 released 2022-06-08
 
 * Bump version to 1.6.2
