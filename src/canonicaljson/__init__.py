@@ -28,7 +28,7 @@ try:
 except ImportError:
     frozendict_type = None  # pragma: no cover
 
-__version__ = "1.6.3"
+__version__ = "1.6.4"
 
 
 def _default(obj: object) -> object:  # pragma: no cover

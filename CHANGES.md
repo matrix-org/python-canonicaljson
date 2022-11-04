@@ -1,3 +1,7 @@
+Version 1.6.4 released 2022-11-04
+
+* Remove unused `setuptools_scm` build requirement.
+
 Version 1.6.3 released 2022-09-23
 
 * Properly package the `canonicaljson` module.
