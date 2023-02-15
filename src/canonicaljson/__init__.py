@@ -20,7 +20,7 @@ from typing import Any, Generator, Iterator, Optional, Type
 try:
     from typing import Protocol
 except ImportError:  # pragma: no cover
-    from typing_extensions import Protocol  # type: ignore[misc]
+    from typing_extensions import Protocol  # type: ignore[assignment]
 
 frozendict_type: Optional[Type[Any]]
 try:
