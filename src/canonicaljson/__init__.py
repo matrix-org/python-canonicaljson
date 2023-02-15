@@ -52,7 +52,9 @@ class Encoder(Protocol):  # pragma: no cover
 
 
 class JsonLibrary(Protocol):
-    JSONEncoder: Encoder
+    @property
+    def JSONEncoder(self) -> Encoder:
+        pass
 
 
 # Declare these in the module scope, but they get configured in
