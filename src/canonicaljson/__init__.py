@@ -51,7 +51,7 @@ class Encoder(Protocol):  # pragma: no cover
         pass
 
 
-class JsonLibrary(Protocol):
+class JsonLibrary(Protocol):  # pragma: no cover
     @property
     def JSONEncoder(self) -> Encoder:
         pass
