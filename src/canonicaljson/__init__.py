@@ -15,12 +15,12 @@
 # limitations under the License.
 
 import platform
-from typing import Any, Generator, Optional, Type
+from typing import Any, Generator, Iterator, Optional, Type
 
 try:
     from typing import Protocol
 except ImportError:  # pragma: no cover
-    from typing_extensions import Protocol  # type: ignore[misc]
+    from typing_extensions import Protocol  # type: ignore[assignment]
 
 frozendict_type: Optional[Type[Any]]
 try:
@@ -44,15 +44,17 @@ class Encoder(Protocol):  # pragma: no cover
     def encode(self, data: object) -> str:
         pass
 
-    def iterencode(self, data: object) -> Generator[str, None, None]:
+    def iterencode(self, data: object) -> Iterator[str]:
         pass
 
-    def __call__(self, *args: Any, **kwargs: Any) -> "Encoder":
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         pass
 
 
-class JsonLibrary(Protocol):
-    JSONEncoder: Encoder
+class JsonLibrary(Protocol):  # pragma: no cover
+    @property
+    def JSONEncoder(self) -> Type[Encoder]:
+        pass
 
 
 # Declare these in the module scope, but they get configured in
