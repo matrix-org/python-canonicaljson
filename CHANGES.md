@@ -1,3 +1,7 @@
+Version 1.6.5 released 2023-02-15
+
+* Update type hints to pass under mypy 1.0.
+
 Version 1.6.4 released 2022-11-04
 
 * Remove unused `setuptools_scm` build requirement.
