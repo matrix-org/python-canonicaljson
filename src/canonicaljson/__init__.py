@@ -58,8 +58,7 @@ def register_preserialisation_callback(
     _preprocess_for_serialisation.register(data_type, callback)
 
 
-# Declare these in the module scope, but they get configured in
-# set_json_library.
+# Declare these once for re-use.
 _canonical_encoder = json.JSONEncoder(
     ensure_ascii=False,
     allow_nan=False,
