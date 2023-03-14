@@ -61,7 +61,7 @@ The underlying JSON implementation can be chosen with the following:
 .. _simplejson: https://simplejson.readthedocs.io/
 
 A preserialisation hook allows you to encode objects which aren't encodable by the
-standard library JSONEncoder.
+standard library ``JSONEncoder``.
 
 .. code:: python
 
