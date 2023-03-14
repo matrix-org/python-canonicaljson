@@ -13,16 +13,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from unittest.mock import Mock
 
 from math import inf, nan
 
 from canonicaljson import (
     encode_canonical_json,
     encode_pretty_printed_json,
-    frozendict_type,
     iterencode_canonical_json,
     iterencode_pretty_printed_json,
     set_json_library,
+    register_preserialisation_callback,
 )
 
 import unittest
@@ -107,22 +108,6 @@ class TestCanonicalJson(unittest.TestCase):
             b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}',
         )
 
-    @unittest.skipIf(
-        frozendict_type is None,
-        "If `frozendict` is not available, skip test",
-    )
-    def test_frozen_dict(self) -> None:
-        # For mypy's benefit:
-        assert frozendict_type is not None
-        self.assertEqual(
-            encode_canonical_json(frozendict_type({"a": 1})),
-            b'{"a":1}',
-        )
-        self.assertEqual(
-            encode_pretty_printed_json(frozendict_type({"a": 1})),
-            b'{\n    "a": 1\n}',
-        )
-
     def test_unknown_type(self) -> None:
         class Unknown(object):
             pass
@@ -167,3 +152,46 @@ class TestCanonicalJson(unittest.TestCase):
             from canonicaljson import json  # type: ignore[attr-defined]
 
             set_json_library(json)
+
+    def test_encode_unknown_class_raises(self) -> None:
+        class C:
+            pass
+
+        with self.assertRaises(Exception):
+            encode_canonical_json(C())
+
+    def test_preserialisation_callback(self) -> None:
+        class C:
+            pass
+
+        # Naughty: this alters the global state of the module. However this
+        # `C` class is limited to this test only, so this shouldn't affect
+        # other types and other tests.
+        register_preserialisation_callback(C, lambda c: "I am a C instance")
+
+        result = encode_canonical_json(C())
+        self.assertEqual(result, b'"I am a C instance"')
+
+    def test_cannot_register_preserialisation_callback_for_object(self) -> None:
+        with self.assertRaises(Exception):
+            register_preserialisation_callback(
+                object, lambda c: "shouldn't be able to do this"
+            )
+
+    def test_most_recent_preserialisation_callback_called(self) -> None:
+        class C:
+            pass
+
+        callback1 = Mock(return_value="callback 1 was called")
+        callback2 = Mock(return_value="callback 2 was called")
+
+        # Naughty: this alters the global state of the module. However this
+        # `C` class is limited to this test only, so this shouldn't affect
+        # other types and other tests.
+        register_preserialisation_callback(C, callback1)
+        register_preserialisation_callback(C, callback2)
+
+        encode_canonical_json(C())
+
+        callback1.assert_not_called()
+        callback2.assert_called_once()
