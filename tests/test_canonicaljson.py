@@ -166,7 +166,7 @@ class TestCanonicalJson(unittest.TestCase):
 
         # Naughty: this alters the global state of the module. However this
         # `C` class is limited to this test only, so this shouldn't affect
-        # other instances.
+        # other types and other tests.
         register_preserialisation_callback(C, lambda c: "I am a C instance")
 
         result = encode_canonical_json(C())
@@ -187,7 +187,7 @@ class TestCanonicalJson(unittest.TestCase):
 
         # Naughty: this alters the global state of the module. However this
         # `C` class is limited to this test only, so this shouldn't affect
-        # other instances.
+        # other types and other tests.
         register_preserialisation_callback(C, callback1)
         register_preserialisation_callback(C, callback2)
 
