@@ -22,12 +22,10 @@ from canonicaljson import (
     encode_pretty_printed_json,
     iterencode_canonical_json,
     iterencode_pretty_printed_json,
-    set_json_library,
     register_preserialisation_callback,
 )
 
 import unittest
-from unittest import mock
 
 
 class TestCanonicalJson(unittest.TestCase):
@@ -139,19 +137,6 @@ class TestCanonicalJson(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             encode_pretty_printed_json(nan)
-
-    def test_set_json(self) -> None:
-        """Ensure that changing the underlying JSON implementation works."""
-        mock_json = mock.Mock(spec=["JSONEncoder"])
-        mock_json.JSONEncoder.return_value.encode.return_value = "sentinel"
-        try:
-            set_json_library(mock_json)
-            self.assertEqual(encode_canonical_json({}), b"sentinel")
-        finally:
-            # Reset the JSON library to whatever was originally set.
-            from canonicaljson import json  # type: ignore[attr-defined]
-
-            set_json_library(json)
 
     def test_encode_unknown_class_raises(self) -> None:
         class C:

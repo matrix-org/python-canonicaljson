@@ -14,13 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import functools
-import platform
-from typing import Any, Callable, Generator, Iterator, Type, TypeVar
-
-try:
-    from typing import Protocol
-except ImportError:  # pragma: no cover
-    from typing_extensions import Protocol  # type: ignore[assignment]
+import json
+from typing import Callable, Generator, Type, TypeVar
 
 
 __version__ = "1.6.5"
@@ -63,54 +58,21 @@ def register_preserialisation_callback(
     _preprocess_for_serialisation.register(data_type, callback)
 
 
-class Encoder(Protocol):  # pragma: no cover
-    def encode(self, data: object) -> str:
-        pass
-
-    def iterencode(self, data: object) -> Iterator[str]:
-        pass
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        pass
-
-
-class JsonLibrary(Protocol):  # pragma: no cover
-    @property
-    def JSONEncoder(self) -> Type[Encoder]:
-        pass
-
-
-# Declare these in the module scope, but they get configured in
-# set_json_library.
-_canonical_encoder: Encoder = None  # type: ignore[assignment]
-_pretty_encoder: Encoder = None  # type: ignore[assignment]
-
-
-def set_json_library(json_lib: JsonLibrary) -> None:
-    """
-    Set the underlying JSON library that canonicaljson uses to json_lib.
-
-    Params:
-        json_lib: The module to use for JSON encoding. Must have a
-            `JSONEncoder` property.
-    """
-    global _canonical_encoder
-    _canonical_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False,
-        allow_nan=False,
-        separators=(",", ":"),
-        sort_keys=True,
-        default=_preprocess_for_serialisation,
-    )
-
-    global _pretty_encoder
-    _pretty_encoder = json_lib.JSONEncoder(
-        ensure_ascii=False,
-        allow_nan=False,
-        indent=4,
-        sort_keys=True,
-        default=_preprocess_for_serialisation,
-    )
+# Declare these once for re-use.
+_canonical_encoder = json.JSONEncoder(
+    ensure_ascii=False,
+    allow_nan=False,
+    separators=(",", ":"),
+    sort_keys=True,
+    default=_preprocess_for_serialisation,
+)
+_pretty_encoder = json.JSONEncoder(
+    ensure_ascii=False,
+    allow_nan=False,
+    indent=4,
+    sort_keys=True,
+    default=_preprocess_for_serialisation,
+)
 
 
 def encode_canonical_json(data: object) -> bytes:
@@ -152,20 +114,3 @@ def iterencode_pretty_printed_json(data: object) -> Generator[bytes, None, None]
     """
     for chunk in _pretty_encoder.iterencode(data):
         yield chunk.encode("utf-8")
-
-
-if platform.python_implementation() == "PyPy":  # pragma: no cover
-    # pypy ships with an optimised JSON encoder/decoder that is faster than
-    # simplejson's C extension.
-    import json
-else:  # pragma: no cover
-    # using simplejson rather than regular json on CPython for backwards
-    # compatibility (simplejson on Python 3.5 handles parsing of bytes while
-    # the standard library json does not).
-    #
-    # Note that it seems performance is on par or better using json from the
-    # standard library as of Python 3.7.
-    import simplejson as json  # type: ignore[no-redef]
-
-# Set the JSON library to the backwards compatible version.
-set_json_library(json)
