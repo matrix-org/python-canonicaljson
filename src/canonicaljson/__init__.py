@@ -13,9 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import functools
 import platform
-from typing import Any, Generator, Iterator, Type
+from typing import Any, Callable, Generator, Iterator, Type, TypeVar
 
 try:
     from typing import Protocol
@@ -26,6 +26,7 @@ except ImportError:  # pragma: no cover
 __version__ = "1.6.5"
 
 
+@functools.singledispatch
 def _preprocess_for_serialisation(obj: object) -> object:  # pragma: no cover
     """Transform an `obj` into something the JSON library knows how to encode.
 
@@ -34,6 +35,32 @@ def _preprocess_for_serialisation(obj: object) -> object:  # pragma: no cover
     raise TypeError(
         "Object of type %s is not JSON serializable" % obj.__class__.__name__
     )
+
+
+T = TypeVar("T")
+
+
+def register_preserialisation_callback(
+    data_type: Type[T], callback: Callable[[T], object]
+) -> None:
+    """
+    Register a `callback` to preprocess `data_type` objects unknown to the JSON encoder.
+
+    When canonicaljson encodes an object `x` at runtime that its JSON library does not
+    know how to encode, it will
+      - select a `callback`,
+      - compute `y = callback(x)`, then
+      - JSON-encode `y` and return the result.
+
+    The `callback` should return an object that is JSON-serialisable by the stdlib
+    json module.
+
+    If this is called multiple times with the same `data_type`, the most recently
+    registered callback is used when serialising that `data_type`.
+    """
+    if data_type is object:
+        raise ValueError("Cannot register callback for the `object` type")
+    _preprocess_for_serialisation.register(data_type, callback)
 
 
 class Encoder(Protocol):  # pragma: no cover

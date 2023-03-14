@@ -15,6 +15,7 @@ Features
   U+0056, to keep the output as small as possible.
 * Uses the shortest escape sequence for each escaped character.
 * Encodes the JSON as UTF-8.
+* Can be configured to encode custom types unknown to the stdlib JSON encoder.
 
 Supports Python versions 3.7 and newer.
 
@@ -58,3 +59,20 @@ The underlying JSON implementation can be chosen with the following:
     which uses the standard library json module).
 
 .. _simplejson: https://simplejson.readthedocs.io/
+
+A preserialisation hook allows you to encode objects which aren't encodable by the
+standard library JSONEncoder.
+
+.. code:: python
+
+    import canonicaljson
+    from typing import Dict
+
+    class CustomType:
+        pass
+
+    def callback(c: CustomType) -> Dict[str, str]:
+        return {"Hello": "world!"}
+
+    canonicaljson.register_preserialisation_callback(CustomType, callback)
+    assert canonicaljson.encode_canonical_json(CustomType()) == b'{"Hello":"world!"}'
