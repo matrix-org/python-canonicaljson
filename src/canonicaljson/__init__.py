@@ -31,7 +31,11 @@ except ImportError:
 __version__ = "1.6.5"
 
 
-def _default(obj: object) -> object:  # pragma: no cover
+def _preprocess_for_serialisation(obj: object) -> object:  # pragma: no cover
+    """Transform an `obj` into something the JSON library knows how to encode.
+
+    This is only called for types that the JSON library does not recognise.
+    """
     if type(obj) is frozendict_type:
         # If frozendict is available and used, cast `obj` into a dict
         return dict(obj)  # type: ignore[call-overload]
@@ -77,7 +81,7 @@ def set_json_library(json_lib: JsonLibrary) -> None:
         allow_nan=False,
         separators=(",", ":"),
         sort_keys=True,
-        default=_default,
+        default=_preprocess_for_serialisation,
     )
 
     global _pretty_encoder
@@ -86,7 +90,7 @@ def set_json_library(json_lib: JsonLibrary) -> None:
         allow_nan=False,
         indent=4,
         sort_keys=True,
-        default=_default,
+        default=_preprocess_for_serialisation,
     )
 
 
