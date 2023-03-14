@@ -15,18 +15,13 @@
 # limitations under the License.
 
 import platform
-from typing import Any, Generator, Iterator, Optional, Type
+from typing import Any, Generator, Iterator, Type
 
 try:
     from typing import Protocol
 except ImportError:  # pragma: no cover
     from typing_extensions import Protocol  # type: ignore[assignment]
 
-frozendict_type: Optional[Type[Any]]
-try:
-    from frozendict import frozendict as frozendict_type
-except ImportError:
-    frozendict_type = None  # pragma: no cover
 
 __version__ = "1.6.5"
 
@@ -36,9 +31,6 @@ def _preprocess_for_serialisation(obj: object) -> object:  # pragma: no cover
 
     This is only called for types that the JSON library does not recognise.
     """
-    if type(obj) is frozendict_type:
-        # If frozendict is available and used, cast `obj` into a dict
-        return dict(obj)  # type: ignore[call-overload]
     raise TypeError(
         "Object of type %s is not JSON serializable" % obj.__class__.__name__
     )

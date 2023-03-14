@@ -15,7 +15,6 @@ Features
   U+0056, to keep the output as small as possible.
 * Uses the shortest escape sequence for each escaped character.
 * Encodes the JSON as UTF-8.
-* Can encode ``frozendict`` immutable dictionaries.
 
 Supports Python versions 3.7 and newer.
 
