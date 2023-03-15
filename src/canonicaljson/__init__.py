@@ -17,7 +17,6 @@ import functools
 import json
 from typing import Callable, Generator, Type, TypeVar
 
-
 __version__ = "2.0.0"
 
 

@@ -13,9 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from unittest.mock import Mock
-
+import unittest
 from math import inf, nan
+from unittest.mock import Mock
 
 from canonicaljson import (
     encode_canonical_json,
@@ -24,8 +24,6 @@ from canonicaljson import (
     iterencode_pretty_printed_json,
     register_preserialisation_callback,
 )
-
-import unittest
 
 
 class TestCanonicalJson(unittest.TestCase):
