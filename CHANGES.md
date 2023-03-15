@@ -1,3 +1,18 @@
+Version 2.0.0 released 2023-03-15
+
+Additions:
+
+* Add a generic `register_preserialisation_callback` mechanism, which
+  allows users to teach canonicaljson how to JSON-encode custom types.
+
+Breaking changes:
+
+* Remove support for serialising `frozendict` instances. Use the new
+  `register_preserialisation_callback` mechanism to replace this
+  functionality if needed.
+* Remove support for `simplejson` and the `set_json_library`alternative
+  json libraries.
+
 Version 1.6.5 released 2023-02-15
 
 * Update type hints to pass under mypy 1.0.

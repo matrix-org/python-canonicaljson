@@ -18,7 +18,7 @@ import json
 from typing import Callable, Generator, Type, TypeVar
 
 
-__version__ = "1.6.5"
+__version__ = "2.0.0"
 
 
 @functools.singledispatch
