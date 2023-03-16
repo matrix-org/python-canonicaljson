@@ -45,21 +45,6 @@ There's also an iterator version:
     import canonicaljson
     assert b''.join(canonicaljson.iterencode_canonical_json({})) == b'{}'
 
-The underlying JSON implementation can be chosen with the following:
-
-.. code:: python
-
-    import json
-    import canonicaljson
-    canonicaljson.set_json_library(json)
-
-.. note::
-
-    By default canonicaljson uses `simplejson`_ under the hood (except for PyPy,
-    which uses the standard library json module).
-
-.. _simplejson: https://simplejson.readthedocs.io/
-
 A preserialisation hook allows you to encode objects which aren't encodable by the
 standard library ``JSONEncoder``.
 

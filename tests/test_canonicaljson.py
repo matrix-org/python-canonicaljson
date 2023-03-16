@@ -13,9 +13,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from unittest.mock import Mock
-
+import unittest
 from math import inf, nan
+from unittest.mock import Mock
 
 from canonicaljson import (
     encode_canonical_json,
@@ -25,8 +25,6 @@ from canonicaljson import (
     register_preserialisation_callback,
 )
 
-import unittest
-
 
 class TestCanonicalJson(unittest.TestCase):
     def test_encode_canonical(self) -> None:
@@ -34,7 +32,7 @@ class TestCanonicalJson(unittest.TestCase):
 
         # ctrl-chars should be encoded.
         self.assertEqual(
-            encode_canonical_json(u"text\u0003\r\n"),
+            encode_canonical_json("text\u0003\r\n"),
             b'"text\\u0003\\r\\n"',
         )
 
@@ -46,20 +44,20 @@ class TestCanonicalJson(unittest.TestCase):
 
         # non-ascii should come out utf8-encoded.
         self.assertEqual(
-            encode_canonical_json({u"la merde amusée": u"💩"}),
+            encode_canonical_json({"la merde amusée": "💩"}),
             b'{"la merde amus\xc3\xa9e":"\xF0\x9F\x92\xA9"}',
         )
 
         # so should U+2028 and U+2029
         self.assertEqual(
-            encode_canonical_json({u"spaces": u"\u2028 \u2029"}),
+            encode_canonical_json({"spaces": "\u2028 \u2029"}),
             b'{"spaces":"\xe2\x80\xa8 \xe2\x80\xa9"}',
         )
 
         # but we need to watch out for 'u1234' after backslash, which should
         # get encoded to an escaped backslash, followed by u1234
         self.assertEqual(
-            encode_canonical_json(u"\\u1234"),
+            encode_canonical_json("\\u1234"),
             b'"\\\\u1234"',
         )
 
@@ -102,7 +100,7 @@ class TestCanonicalJson(unittest.TestCase):
 
         # non-ascii should come out utf8-encoded.
         self.assertEqual(
-            encode_pretty_printed_json({u"la merde amusée": u"💩"}),
+            encode_pretty_printed_json({"la merde amusée": "💩"}),
             b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}',
         )
 
