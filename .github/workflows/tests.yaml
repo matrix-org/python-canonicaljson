@@ -39,7 +39,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install tox
-      - run: tox -e py
+      - run: tox
 
   packaging:
     runs-on: ${{ matrix.os }}
@@ -65,5 +65,4 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install tox
-      - run: tox -e py
-
+      - run: tox
