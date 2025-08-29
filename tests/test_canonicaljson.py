@@ -25,6 +25,12 @@ from canonicaljson import (
     register_preserialisation_callback,
 )
 
+try:
+    import orjson
+
+except ImportError:
+    orjson = None  # type: ignore [assignment]
+
 
 class TestCanonicalJson(unittest.TestCase):
     def test_encode_canonical(self) -> None:
@@ -144,6 +150,9 @@ class TestCanonicalJson(unittest.TestCase):
             encode_canonical_json(C())
 
     def test_preserialisation_callback(self) -> None:
+        if orjson is not None:
+            self.skipTest("This is not used when orjson is in use")
+
         class C:
             pass
 
@@ -156,12 +165,17 @@ class TestCanonicalJson(unittest.TestCase):
         self.assertEqual(result, b'"I am a C instance"')
 
     def test_cannot_register_preserialisation_callback_for_object(self) -> None:
+        if orjson is not None:
+            self.skipTest("This is not used when orjson is in use")
         with self.assertRaises(Exception):
             register_preserialisation_callback(
                 object, lambda c: "shouldn't be able to do this"
             )
 
     def test_most_recent_preserialisation_callback_called(self) -> None:
+        if orjson is not None:
+            self.skipTest("This is not used when orjson is in use")
+
         class C:
             pass
 
