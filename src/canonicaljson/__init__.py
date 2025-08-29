@@ -109,7 +109,9 @@ def encode_canonical_json(data: object) -> bytes:
     """
     if use_orjson:
         check_for_nan_and_inf(data)
-        return orjson.dumps(data, option=orjson.OPT_SORT_KEYS)
+        return orjson.dumps(
+            data, default=_preprocess_for_serialisation, option=orjson.OPT_SORT_KEYS
+        )
 
     s = _canonical_encoder.encode(data)
     return s.encode("utf-8")
@@ -135,7 +137,9 @@ def encode_pretty_printed_json(data: object) -> bytes:
     if use_orjson:
         # Unfortunately, orjson decided to hardcode their indent to 2
         check_for_nan_and_inf(data)
-        return orjson.dumps(data, option=orjson.OPT_INDENT_2)
+        return orjson.dumps(
+            data, default=_preprocess_for_serialisation, option=orjson.OPT_INDENT_2
+        )
 
     return _pretty_encoder.encode(data).encode("utf-8")
 

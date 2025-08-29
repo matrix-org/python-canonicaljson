@@ -15,7 +15,10 @@
 # limitations under the License.
 import unittest
 from math import inf, nan
+from typing import Any, Union
 from unittest.mock import Mock
+
+from immutabledict import immutabledict
 
 from canonicaljson import (
     encode_canonical_json,
@@ -193,6 +196,23 @@ class TestCanonicalJson(unittest.TestCase):
         with self.assertRaises(ValueError):
             encode_pretty_printed_json(list_with_nan)
 
+    def test_immutable_dict_handling(self) -> None:
+        im_d: immutabledict[str, Union[str, int]] = immutabledict(
+            {"key1": "value1", "key2": 42}
+        )
+
+        # Lifted from Synapse's __init__.py
+        def _immutabledict_cb(d: immutabledict[str, Any]) -> Any:
+            try:
+                return d._dict
+            except Exception:
+                # Paranoia: fall back to a `dict()` call, in case a future version of
+                # immutabledict removes `_dict` from the implementation.
+                return dict(d)
+
+        register_preserialisation_callback(immutabledict, _immutabledict_cb)
+        encode_canonical_json(im_d)
+
     def test_encode_unknown_class_raises(self) -> None:
         class C:
             pass
@@ -201,9 +221,6 @@ class TestCanonicalJson(unittest.TestCase):
             encode_canonical_json(C())
 
     def test_preserialisation_callback(self) -> None:
-        if orjson is not None:
-            self.skipTest("This is not used when orjson is in use")
-
         class C:
             pass
 
@@ -216,17 +233,12 @@ class TestCanonicalJson(unittest.TestCase):
         self.assertEqual(result, b'"I am a C instance"')
 
     def test_cannot_register_preserialisation_callback_for_object(self) -> None:
-        if orjson is not None:
-            self.skipTest("This is not used when orjson is in use")
         with self.assertRaises(Exception):
             register_preserialisation_callback(
                 object, lambda c: "shouldn't be able to do this"
             )
 
     def test_most_recent_preserialisation_callback_called(self) -> None:
-        if orjson is not None:
-            self.skipTest("This is not used when orjson is in use")
-
         class C:
             pass
 
