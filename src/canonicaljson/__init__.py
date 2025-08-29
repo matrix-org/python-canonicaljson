@@ -17,6 +17,16 @@ import functools
 import json
 from typing import Callable, Generator, Type, TypeVar
 
+use_orjson = False
+try:
+    import orjson
+
+    use_orjson = True
+
+except ImportError:
+    orjson = None  # type: ignore [assignment]
+
+
 __version__ = "2.0.0"
 
 
@@ -80,6 +90,9 @@ def encode_canonical_json(data: object) -> bytes:
     This encoding is the shortest possible. Dictionary keys are
     lexicographically sorted by unicode code point.
     """
+    if use_orjson:
+        return orjson.dumps(data, option=orjson.OPT_SORT_KEYS)
+
     s = _canonical_encoder.encode(data)
     return s.encode("utf-8")
 
@@ -100,6 +113,10 @@ def iterencode_canonical_json(data: object) -> Generator[bytes, None, None]:
 
 def encode_pretty_printed_json(data: object) -> bytes:
     """Encodes the given `data` as a UTF-8 human-readable JSON bytestring."""
+
+    if use_orjson:
+        # Unfortunately, orjson decided to hardcode their indent to 2
+        return orjson.dumps(data, option=orjson.OPT_INDENT_2)
 
     return _pretty_encoder.encode(data).encode("utf-8")
 
