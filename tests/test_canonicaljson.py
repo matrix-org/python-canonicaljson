@@ -104,10 +104,16 @@ class TestCanonicalJson(unittest.TestCase):
         self.assertEqual(encode_pretty_printed_json({}), b"{}")
         self.assertEqual(list(iterencode_pretty_printed_json({})), [b"{}"])
 
+        if orjson is not None:
+            # orjson's pretty print style is a flag option and is hardcoded to "2",
+            # so this will be slightly different.
+            comparison = b'{\n  "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}'
+        else:
+            comparison = b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}'
         # non-ascii should come out utf8-encoded.
         self.assertEqual(
             encode_pretty_printed_json({"la merde amusée": "💩"}),
-            b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}',
+            comparison,
         )
 
     def test_unknown_type(self) -> None:
