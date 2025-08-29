@@ -15,7 +15,10 @@
 # limitations under the License.
 import unittest
 from math import inf, nan
+from typing import Any, Union
 from unittest.mock import Mock
+
+from immutabledict import immutabledict
 
 from canonicaljson import (
     encode_canonical_json,
@@ -24,6 +27,12 @@ from canonicaljson import (
     iterencode_pretty_printed_json,
     register_preserialisation_callback,
 )
+
+try:
+    import orjson
+
+except ImportError:
+    orjson = None  # type: ignore [assignment]
 
 
 class TestCanonicalJson(unittest.TestCase):
@@ -98,10 +107,16 @@ class TestCanonicalJson(unittest.TestCase):
         self.assertEqual(encode_pretty_printed_json({}), b"{}")
         self.assertEqual(list(iterencode_pretty_printed_json({})), [b"{}"])
 
+        if orjson is not None:
+            # orjson's pretty print style is a flag option and is hardcoded to "2",
+            # so this will be slightly different.
+            comparison = b'{\n  "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}'
+        else:
+            comparison = b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}'
         # non-ascii should come out utf8-encoded.
         self.assertEqual(
             encode_pretty_printed_json({"la merde amusée": "💩"}),
-            b'{\n    "la merde amus\xc3\xa9e": "\xF0\x9F\x92\xA9"\n}',
+            comparison,
         )
 
     def test_unknown_type(self) -> None:
@@ -135,6 +150,68 @@ class TestCanonicalJson(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             encode_pretty_printed_json(nan)
+
+    def test_invalid_nested_float_values(self) -> None:
+        """Infinity/-Infinity/NaN are not allowed in canonicaljson."""
+        data_with_inf = {"a": 1, "b": float("inf")}
+        data_with_neg_inf = {"a": 1, "b": -float("inf")}
+        data_with_nan = {"a": 1, "b": float("nan")}
+        list_with_inf = {"a": [1, float("inf")]}
+        list_with_neg_inf = {"a": [1, -float("inf")]}
+        list_with_nan = {"a": [1, float("nan")]}
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(data_with_inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(data_with_inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(data_with_neg_inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(data_with_neg_inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(data_with_nan)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(data_with_nan)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(list_with_inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(list_with_inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(list_with_neg_inf)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(list_with_neg_inf)
+
+        with self.assertRaises(ValueError):
+            encode_canonical_json(list_with_nan)
+
+        with self.assertRaises(ValueError):
+            encode_pretty_printed_json(list_with_nan)
+
+    def test_immutable_dict_handling(self) -> None:
+        im_d: immutabledict[str, Union[str, int]] = immutabledict(
+            {"key1": "value1", "key2": 42}
+        )
+
+        # Lifted from Synapse's __init__.py
+        def _immutabledict_cb(d: immutabledict[str, Any]) -> Any:
+            try:
+                return d._dict
+            except Exception:
+                # Paranoia: fall back to a `dict()` call, in case a future version of
+                # immutabledict removes `_dict` from the implementation.
+                return dict(d)
+
+        register_preserialisation_callback(immutabledict, _immutabledict_cb)
+        encode_canonical_json(im_d)
 
     def test_encode_unknown_class_raises(self) -> None:
         class C:

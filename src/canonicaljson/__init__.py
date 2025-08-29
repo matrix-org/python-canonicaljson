@@ -15,7 +15,18 @@
 # limitations under the License.
 import functools
 import json
+import math
 from typing import Callable, Generator, Type, TypeVar
+
+use_orjson = False
+try:
+    import orjson
+
+    use_orjson = True
+
+except ImportError:
+    orjson = None  # type: ignore [assignment]
+
 
 __version__ = "2.0.0"
 
@@ -74,12 +85,34 @@ _pretty_encoder = json.JSONEncoder(
 )
 
 
+def check_for_nan_and_inf(data: object) -> None:
+    """
+    Recursively checks for NaN and Inf values in a dictionary or list.
+    Raises ValueError if found.
+    """
+    if isinstance(data, dict):
+        for key, value in data.items():
+            check_for_nan_and_inf(value)
+    elif isinstance(data, list):
+        for item in data:
+            check_for_nan_and_inf(item)
+    elif isinstance(data, float):
+        if math.isnan(data) or math.isinf(data):
+            raise ValueError
+
+
 def encode_canonical_json(data: object) -> bytes:
     """Encodes the given `data` as a UTF-8 canonical JSON bytestring.
 
     This encoding is the shortest possible. Dictionary keys are
     lexicographically sorted by unicode code point.
     """
+    if use_orjson:
+        check_for_nan_and_inf(data)
+        return orjson.dumps(
+            data, default=_preprocess_for_serialisation, option=orjson.OPT_SORT_KEYS
+        )
+
     s = _canonical_encoder.encode(data)
     return s.encode("utf-8")
 
@@ -100,6 +133,13 @@ def iterencode_canonical_json(data: object) -> Generator[bytes, None, None]:
 
 def encode_pretty_printed_json(data: object) -> bytes:
     """Encodes the given `data` as a UTF-8 human-readable JSON bytestring."""
+
+    if use_orjson:
+        # Unfortunately, orjson decided to hardcode their indent to 2
+        check_for_nan_and_inf(data)
+        return orjson.dumps(
+            data, default=_preprocess_for_serialisation, option=orjson.OPT_INDENT_2
+        )
 
     return _pretty_encoder.encode(data).encode("utf-8")
 

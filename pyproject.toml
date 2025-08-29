@@ -1,6 +1,8 @@
 [tool.mypy]
 show_error_codes = true
 strict = true
+# specifically this is because there is no typing stubs for immutabledict
+ignore_missing_imports = true
 
 files = ["."]
 
